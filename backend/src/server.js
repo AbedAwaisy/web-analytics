@@ -1,29 +1,17 @@
 const express = require('express');
-const mysql = require('mysql');
-const cors = require('cors'); // Import the cors middleware
+const cors = require('cors');
+const pool = require('./db'); // Import the database connection from db.js
 
 const app = express();
 app.use(cors());
 
-// Set up your connection information
-const dbConfig = {
-  host: '34.165.192.24',
-  user: 'root',
-  port: 3306,
-  password: 'Q4P.M+0t>u$>As+0',
-  database: 'Example'
-};
-
-// Create a MySQL pool
-const pool = mysql.createPool(dbConfig);
-
 app.get('/data', async (req, res) => {
   // Replace with your actual query
   const sqlQuery = 'SELECT * FROM Persons';
-  
+
   pool.query(sqlQuery, (err, results) => {
     if (err) {
-      console.error('Error11 fetching data:', err);
+      console.error('Error fetching data:', err);
       res.status(500).json({ message: 'Error fetching data', error: err });
     } else {
       res.json(results);
