@@ -1,23 +1,19 @@
 const express = require('express');
 const cors = require('cors');
-const pool = require('./db'); // Import the database connection from db.js
+const router = require('./routes/router'); // Import the router for handling getData endpoint
+const multer = require('multer');
 
 const app = express();
 app.use(cors());
+const storage = multer.memoryStorage(); // Store files in memory
 
-app.get('/data', async (req, res) => {
-  // Replace with your actual query
-  const sqlQuery = 'SELECT * FROM Persons';
 
-  pool.query(sqlQuery, (err, results) => {
-    if (err) {
-      console.error('Error fetching data:', err);
-      res.status(500).json({ message: 'Error fetching data', error: err });
-    } else {
-      res.json(results);
-    }
-  });
+const upload = multer({ storage: storage });
+app.post('/upload', upload.single('file'), (req, res, next) => {
+  next();
 });
+app.use('/', router);
+
 
 const PORT = 3001;
 

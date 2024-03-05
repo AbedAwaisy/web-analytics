@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './ExportData.css'; 
+import { fetchDataFromDB } from '../api/api';
 
 const ExportData = () => {
     const [data, setData] = useState([]); // This will be an array of objects
@@ -9,14 +10,13 @@ const ExportData = () => {
     const sortOptions = ['Option 1', 'Option 2', 'Option 3'];
     const experimentOptions = ['Experiment 1', 'Experiment 2', 'Experiment 3'];
 
-    const fetchDataFromDB = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/data');
-        const result = await response.json();
-        setData([result]); // Assuming result is a single object, wrap it in an array
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
+    const handleFetchData = async () => {
+        try {
+            const fetchedData = await fetchDataFromDB();
+            setData(fetchedData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     };
 
     return (
@@ -43,7 +43,7 @@ const ExportData = () => {
             </select>
           </div>
           
-          <button className="submit-btn" onClick={fetchDataFromDB}>Submit</button>
+          <button className="submit-btn" onClick={handleFetchData}>Submit</button>
           
           {data.length > 0 && (
             <div className="data-table">
@@ -72,7 +72,7 @@ const ExportData = () => {
             </div>
           )}
         </div>
-      );
+    );
 };
 
 export default ExportData;
