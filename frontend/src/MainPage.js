@@ -1,28 +1,22 @@
-import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter, Routes, Route, and Link
+import Header from './components/Header/Header';
+import Home from './pages/Home';
+import ExportData from './pages/ExportData';
+import Integration from './pages/Integration';
+
 
 const MainPage = () => {
-  const [data, setData] = useState([]);
-
-  const fetchDataFromDB = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/data'); 
-      const result = await response.json();
-      console.log(result);
-      setData(result);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
   return (
-    <div>
-      <button onClick={fetchDataFromDB}>Get Data</button>
+    <Router>
+      <Header />
       <div>
-        {data.map((item, index) => (
-          <div key={index}>{JSON.stringify(item)}</div> // Adjust rendering as needed
-        ))}
+        <Routes>
+          <Route path="/home" element={<Home />} />
+          <Route path="/exportdata" element={<ExportData />} />
+          <Route path="/integration" element={<Integration />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 };
 
