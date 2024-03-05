@@ -1,0 +1,41 @@
+.home-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .mop-container {
+    margin-bottom: 30px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease-in-out; /* Adding a subtle box-shadow transition */
+  }
+  
+  .mop-container:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adding a box-shadow on hover */
+  }
+  
+  .mop-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .mop-description {
+    margin-top: 10px;
+    color: #666;
+  }
+  
+  .learn-more-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .learn-more-link:hover {
+    text-decoration: underline;
+  }
+  
