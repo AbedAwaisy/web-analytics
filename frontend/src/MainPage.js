@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter, Routes, Route, and Link
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // Import BrowserRouter, Routes, Route, and Link
 import Header from './components/Header/Header';
 import Home from './pages/Home';
 import ExportData from './pages/ExportData';
@@ -14,6 +14,8 @@ const MainPage = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/exportdata" element={<ExportData />} />
           <Route path="/integration" element={<Integration />} />
+          <Route path="/" element={<Navigate to="/home" />} />
+
         </Routes>
       </div>
     </Router>
