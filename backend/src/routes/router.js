@@ -8,7 +8,7 @@ const dataController = require('../controllers/controller');
 router.get('/data/:sortType/:experimentType', dataController.getData);
 router.get('/sortOptions', dataController.sortOptions);
 router.get('/experimentOptions/:sortType', dataController.experimentOptions);
-router.post('/upload', dataController.uploadData);
+//router.post('/upload', dataController.uploadData);
 
 
 module.exports = router;

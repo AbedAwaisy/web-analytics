@@ -45,39 +45,40 @@ const dataController = {
             res.json(results[0]);
         }
     });
-  },
+  }
+//   },
 
 
-  uploadData: async (req, res) => {
-    try {
-        // Read uploaded file from request body
-        const file = req.file.buffer;
-        //res.status(200).json({ message: 'File uploaded successfully' });
-        // Parse Excel file data
-        const workbook = XLSX.read(file, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0]; // Assuming there's only one sheet
-        const worksheet = workbook.Sheets[sheetName];
-        const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+//   uploadData: async (req, res) => {
+//     try {
+//         // Read uploaded file from request body
+//         const file = req.file.buffer;
+//         //res.status(200).json({ message: 'File uploaded successfully' });
+//         // Parse Excel file data
+//         const workbook = XLSX.read(file, { type: 'buffer' });
+//         const sheetName = workbook.SheetNames[0]; // Assuming there's only one sheet
+//         const worksheet = workbook.Sheets[sheetName];
+//         const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        // Prepare data for database insertion
-        const values = data.slice(1); // Skip header row
-        const sqlQuery = 'INSERT INTO Persons (PersonID, LastName, FirstName, Address, City) VALUES ?';
-        console.log('Data to be uploaded:', values);
-        // Insert data into the database
-        pool.query(sqlQuery, [values], (err, result) => {
-            if (err) {
-                console.error('Error uploading data:', err);
-                res.status(500).json({ message: 'Error uploading data', error: err });
-            } else {
-                console.log('Data uploaded successfully');
-                res.status(200).json({ message: 'Data uploaded successfully' });
-            }
-        });
-    } catch (error) {
-        console.error('Error parsing file:', error);
-        res.status(400).json({ message: 'Error parsing file', error: error });
-    }
-}
+//         // Prepare data for database insertion
+//         const values = data.slice(1); // Skip header row
+//         const sqlQuery = 'INSERT INTO Persons (PersonID, LastName, FirstName, Address, City) VALUES ?';
+//         console.log('Data to be uploaded:', values);
+//         // Insert data into the database
+//         pool.query(sqlQuery, [values], (err, result) => {
+//             if (err) {
+//                 console.error('Error uploading data:', err);
+//                 res.status(500).json({ message: 'Error uploading data', error: err });
+//             } else {
+//                 console.log('Data uploaded successfully');
+//                 res.status(200).json({ message: 'Data uploaded successfully' });
+//             }
+//         });
+//     } catch (error) {
+//         console.error('Error parsing file:', error);
+//         res.status(400).json({ message: 'Error parsing file', error: error });
+//     }
+// }
 }
 
 module.exports = dataController;

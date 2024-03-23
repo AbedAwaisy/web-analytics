@@ -7,9 +7,10 @@ export const uploadFile = async (file, setError) => {
     console.log('File object:', file);
     console.log('FormData:', formData);
     
-    const response = await axios.post('http://localhost:3001/upload', formData);
+    const response = await axios.post('http://localhost:8000/upload', formData);
     console.log('File uploaded successfully');
     setError('File uploaded successfully');
+    console.log(response.data);
     return response.data; // Return the response data
   } catch (error) {
     console.error('Error uploading file:', error);
