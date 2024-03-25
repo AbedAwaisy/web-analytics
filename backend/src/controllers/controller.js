@@ -1,12 +1,15 @@
 const pool = require('../db');
 const XLSX = require('xlsx'); // Import XLSX library for parsing Excel files
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const saltRounds = 10;
+const secretKey = 'mySecretKeyForJWTs_$2a$12$P5kgkrCnW2zX02dBy6r1Gu';
 
 const dataController = {
-  
-  getData: async = (req, res) => {
+  getData: async (req, res) => {
     // Replace with your actual query
-    const sqlQuery = 'SELECT * FROM Persons';
-  
+    const sqlQuery = 'SELECT * FROM Person';
+
     pool.query(sqlQuery, (err, results) => {
       if (err) {
         console.error('Error fetching data:', err);
@@ -15,7 +18,88 @@ const dataController = {
         res.json(results);
       }
     });
-  }, 
+  },
+
+  insertUser: async (req, res) => {
+    try {
+      const { name, email, password, mop } = req.body;
+      // Basic validation
+     /* let user_details = {
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+        mop: req.body.mop,
+
+      }*/
+      // Replace the following code with your actual database insertion logic
+      const sqlQuery = 'INSERT INTO users (name, email, password, mop) VALUES (?, ?, ?, ?)';
+      //const hashedPassword = await bcrypt.hash(password, saltRounds);
+      pool.query(sqlQuery, [name, email, password, mop], (err, result) => {
+        if (err) {
+          console.error('Error inserting user:', err);
+          res.status(500).json({ message: 'Error inserting user', error: err }); // Provide detailed error message
+        } else {
+          console.log('User inserted successfully');
+          res.status(200).json({ message: 'User inserted successfully' });
+        }
+      });
+    } catch (error) {
+      console.error('Error inserting user:', error);
+      res.status(500).json({ message: 'Error inserting user', error: error}); // Provide detailed error message
+    }
+
+  },
+
+
+
+
+  loginUser: async (req, res) => {
+    try {
+      const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
+      pool.query(sql, [req.body.email, req.body.password], (err, data) => {
+        if (err) {
+          console.error('Error querying database:', err);
+          return res.json("Error");
+        }
+        if (data.length > 0) {
+          return res.json("Success");
+        } else {
+          return res.json("Fail");
+        }
+      });
+    } catch (error) {
+      console.error('Error logging in:', error);
+      res.status(500).json({ message: 'Error logging in. Please try again.' });
+    }
+  },
+ /*   try {
+      const { email, password } = req.body;
+      const selectQuery = 'SELECT * FROM users WHERE email = ?';
+      const user = await pool.query(selectQuery, [email]);
+
+      if (!user) {
+          throw { status: 401, message: "Username or Password incorrect" };
+      }
+
+      // Ensure user.password exists before comparing
+      if (!user.password) {
+          throw { status: 500, message: "User password is missing or invalid" };
+      }
+
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if (passwordMatch) {
+          const token = jwt.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
+          res.status(200).json({ message: 'Login successful', token });
+      } else {
+          throw { status: 401, message: "Username or Password incorrect" };
+      }
+  } catch (error) {
+      console.error('Error logging in:', error);
+      res.status(error.status || 500).json({ message: error.message || 'Error logging in. Please try again.' });
+  }
+}, */
+
 
   uploadData: async (req, res) => {
     try {
@@ -47,6 +131,14 @@ const dataController = {
         res.status(400).json({ message: 'Error parsing file', error: error });
     }
 }
+
+
+
+
+
+
+
+
 }
 
 module.exports = dataController;
