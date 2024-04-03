@@ -144,11 +144,26 @@ const dataController = {
         console.error('Error parsing file:', error);
         res.status(400).json({ message: 'Error parsing file', error: error });
     }
+},
+
+
+
+getData: async (req, res) => {
+  const sortType = req.params.sortType;
+  const experimentType = req.params.experimentType;
+  console.log('Sort type:', sortType);
+  console.log('Experiment type:', experimentType);
+  // Call the stored procedure passing both sortType and experimentType as arguments
+  const sqlQuery = 'CALL JoinTables(?, ?)';
+  pool.query(sqlQuery, [sortType, experimentType], (err, results) => {
+      if (err) {
+          console.error('Error fetching data:', err);
+          res.status(500).json({ message: 'Error fetching data', error: err });
+      } else {
+          res.json(results[0]);
+      }
+  });
 }
-
-
-
-
 
 
 
