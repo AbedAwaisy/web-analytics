@@ -1,0 +1,50 @@
+/* Register.css */
+
+.stylescontainer {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stylestitle {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .styleslabel {
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .stylesinput {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .styleserror {
+    color: #ff0000;
+    margin-top: -10px;
+    margin-bottom: 16px;
+  }
+  
+  .stylesbutton {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .stylesbutton:hover {
+    background-color: #45a049;
+  }
+  
