@@ -1,7 +1,6 @@
 from typing import Generator
 from fastapi import FastAPI, File, UploadFile, Depends, WebSocket
 import pandas as pd
-from .dependencies import get_db_connection  # Adjust this import based on your project structure
 from fastapi.middleware.cors import CORSMiddleware
 import uuid
 import os
@@ -27,7 +26,8 @@ async def upload_file(file: UploadFile = File(...)):
         with open(temp_file_path, "wb") as temp_file:
             content = await file.read()
             temp_file.write(content)
-        print("here")
+
+
         return {"file_name": file.filename, "status": "Columns check required", "action": "initiate_ws_connection"}
     except Exception as e:
         return {"file_name": file.filename, "status": f"An error occurred: {e}"}
@@ -67,5 +67,5 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.send_text("Integration cancelled by user.")
     else:
         await websocket.send_text("No Experiment column. Processing skipped.")
-    os.remove(temp_file_path)
+    #os.remove(temp_file_path)
     await websocket.close()

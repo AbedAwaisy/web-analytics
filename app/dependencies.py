@@ -25,7 +25,4 @@ pool.init()
 #Dependency to get a database connection from the pool
 def get_db_connection():
     connection = pool.get_conn()
-    try:
-        yield connection
-    finally:
-        pool.release(connection)
+    return connection
