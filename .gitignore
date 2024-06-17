@@ -1,0 +1,5 @@
+venv/
+temp_files/
+app/__pycache__/
+integrations/__pycache__/
+.idea/
