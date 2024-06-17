@@ -1,14 +1,25 @@
 import mysql.connector
 from difflib import SequenceMatcher
 import numpy as np
-import Levenshtein
+# import Levenshtein
+import os
 
+from dotenv import load_dotenv
+
+# Load environment variables from the .env file
+load_dotenv()
 
 # helpper function [no need to do any thing]
 
 def connect():
-    #Create a connection to the MySQL server
-    conn = mysql.connector.connect(user='root', password='Q4P.M+0t>u$>As+0', host='34.165.192.24', database="Example")
+    # Get the database credentials from environment variables
+    user = os.getenv('DB_USER')
+    password = os.getenv('DB_PASSWORD')
+    host = os.getenv('DB_HOST')
+    database = os.getenv('DB_NAME')
+
+    # Create a connection to the MySQL server
+    conn = mysql.connector.connect(user=user, password=password, host=host, database=database)
     return conn
 
 
@@ -196,3 +207,12 @@ def update_single_harvest_number(df, col1, col2):
     return df.apply(check_valid_single_harvest, axis=1, col1=col1, col2=col2)
     
 
+# Test the connection
+if __name__ == "__main__":
+    connection = connect()
+    cursor = connection.cursor()
+    cursor.execute("SELECT DATABASE()")
+    db_name = cursor.fetchone()
+    print(f"Connected to database: {db_name[0]}")
+    cursor.close()
+    connection.close()
