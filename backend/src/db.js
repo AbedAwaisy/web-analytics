@@ -1,16 +1,15 @@
 const mysql = require('mysql');
+require('dotenv').config({path: '/home/corazon/Desktop/web-analytics/.env'}); // Load environment variables from the root .env file
 
-// Set up your connection information
+
 const dbConfig = {
-  host: 'my_ip_address',
-  user: 'root',
-  port: 3306,
-  password: 'my_pw',
-  database: 'Example'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: process.env.DB_PORT,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE
 };
 
-// Create a MySQL pool
 const pool = mysql.createPool(dbConfig);
-
 
 module.exports = pool;
