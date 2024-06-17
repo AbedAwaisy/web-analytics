@@ -2,10 +2,10 @@ const mysql = require('mysql');
 
 // Set up your connection information
 const dbConfig = {
-  host: '34.165.192.24',
+  host: 'my_ip_address',
   user: 'root',
   port: 3306,
-  password: 'Q4P.M+0t>u$>As+0',
+  password: 'my_pw',
   database: 'Example'
 };
 
