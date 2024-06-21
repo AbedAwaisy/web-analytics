@@ -1,75 +1,73 @@
+import pandas as pd
+from datetime import datetime
+from collections import defaultdict
+import sys
+from integrations.Helpper_Functions import *
+# websocket import, the file name is websocket
+from integrations.WebSocket import *
+
+
 class Validation_Meta:
-    def __init__(self, df, sorting_gap=1000, sorting_gap_std=0.2, date='2010-01-01'):
+    def __init__(self, df, sorting_gap=1000, sorting_gap_std=0.2, date='2016-01-01'):
         self.df = df
         self.n = len(self.df)
         self.columns = columns_mapper(self.df)
         self.date = datetime.strptime(date, '%Y-%m-%d').date()
         self.sorting_gap = sorting_gap + sorting_gap * sorting_gap_std
 
-    def validate_harvest_date(self):
+    async def validate_harvest_date(self):
         harvest_date = self.columns['תאריך קטיף']
         # Convert the date column to datetime dtype with only date component
-        # self.df[harvest_date] = pd.to_datetime(self.df[harvest_date], errors='coerce').dt.date
-        self.df.loc[:, harvest_date] = pd.to_datetime(self.df[harvest_date], errors='coerce').dt.date
+        data = self.df.copy()
+        data.loc[:, harvest_date] = pd.to_datetime(data[harvest_date], errors='coerce').dt.date
 
         # Check for invalid date values
-        invalid_dates = self.df[self.df[harvest_date].isna()]
+        invalid_dates = data[data[harvest_date].isna()]
         if not invalid_dates.empty:
-            authority = input(
-                f"{len(invalid_dates)} out of {self.n} Invalid date value(s) founded in the harvest date column ({harvest_date}), give me authority to drop those rows or fix the file and try again: ")
-            if authority == 'yes':
-                self.df = self.df[self.df[harvest_date].notna()]
+            await WebSocketHandler.send_message(
+                f"{len(invalid_dates)} out of {self.n} Invalid date value(s) founded in the harvest date column ({harvest_date}), give me authority to drop those rows or fix the file and try again (Yes/No): ")
+            authority = await WebSocketHandler.receive_message()
+
+            if authority.lower() == 'yes':
+                self.df = self.df[data[harvest_date].notna()]
                 self.n = len(self.df)
                 if self.n == 0:
-                    raise ValueError(
-                        "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    await WebSocketHandler.send_message("No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    sys.exit(1)
             else:
                 indices = [i + 2 for i in list(invalid_dates.index)]
-                print(
+                await WebSocketHandler.send_message(
                     f"\n the invalid samples indices are (the indices as it appears in the Excel file.): \n {indices}")
-                raise ValueError(f"Invalid date value(s) founded in the harvest date column ({harvest_date}).")
+                sys.exit(1)
 
-        valid_dates = self.df[(self.df[harvest_date] >= self.date)]
-        invalid_dates = self.df[(self.df[harvest_date] < self.date)]
-        if len(invalid_dates) != 0:
-            authority = input(
-                f"{len(invalid_dates)} out of {self.n} samples are recorded before {self.date}. founded in the harvest date column ({harvest_date}), give me authority to drop those rows or fix the file and try again: ")
-            if authority == 'yes':
-                self.df = self.df[self.df[harvest_date].notna()]
-                self.n = len(self.df)
-                if self.n == 0:
-                    raise ValueError(
-                        "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
-            else:
-                indices = [i + 2 for i in list(invalid_dates.index)]
-                print(f"\n the invalid samples indices are (the indices as it appears in the Excel file): \n {indices}")
-                raise ValueError(f"records before {self.date} founded in the harvest date column ({harvest_date}).")
-
-    def validate_sorting_date(self):
+    async def validate_sorting_date(self):
         # Convert the date_column to datetime
         sorting_date = self.columns['תאריך מיון']
         data = self.df.copy()
-        self.df.loc[:, sorting_date] = pd.to_datetime(data[sorting_date], errors='coerce')
-        # self.df.loc[:, sorting_date] = pd.to_datetime(self.df[sorting_date], errors='coerce')
-        # self.df[sorting_date] = pd.to_datetime(self.df[sorting_date], errors='coerce')
+        data.loc[:, sorting_date] = pd.to_datetime(data[sorting_date], errors='coerce')
+
+        # data[sorting_date] = pd.to_datetime(self.df[sorting_date], errors='coerce')
 
         # Check for invalid dates
-        invalid_dates = self.df[self.df[sorting_date].isna()]
+        invalid_dates = data[data[sorting_date].isna()]
         if not invalid_dates.empty:
-            authority = input(
-                f"{len(invalid_dates)} out of {self.n} Invalid date(s) founded in the sorting date column ({sorting_date}), give me authority to drop those rows or fix the file and try again: ")
-            if authority == 'yes':
-                self.df = self.df[self.df[sorting_date].notna()]
+            await WebSocketHandler.send_message(
+                f"{len(invalid_dates)} out of {self.n} Invalid date(s) founded in the sorting date column ({sorting_date}), give me authority to drop those rows or fix the file and try again (Yes/No): ")
+            authority = await WebSocketHandler.receive_message()
+
+            if authority.lower() == 'yes':
+                self.df = self.df[data[sorting_date].notna()]
                 self.n = len(self.df)
                 if self.n == 0:
-                    raise ValueError(
-                        "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    await WebSocketHandler.send_message("No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    sys.exit(1)
             else:
                 indices = [i + 2 for i in list(invalid_dates.index)]
-                print(f"\n the invalid samples indices are (the indices as it appears in the Excel file): \n {indices}")
-                raise ValueError(f"Invalid date value(s) found in the harvest date column ({sorting_date}).")
+                await WebSocketHandler.send_message(
+                    f"\n the invalid samples indices are (the indices as it appears in the Excel file): \n {indices}")
+                sys.exit(1)
 
-    def validate_date_gap(self):
+    async def validate_date_gap(self):
         sorting_date = self.columns['תאריך מיון']
         harvest_date = self.columns['תאריך קטיף']
 
@@ -82,21 +80,60 @@ class Validation_Meta:
         num_exceeding_max_gap = (data['difference_hours'] > self.sorting_gap).sum()
 
         if num_exceeding_max_gap > 0:
-            authority = input(
-                f"{num_exceeding_max_gap} out of {self.n} Invalid date gaps value(s) between harvest date and sorting date have been founded, max gap is {self.sorting_gap} hours, give me authority to drop those rows or fix the file and try again: ")
-            if authority == 'yes':
+            await WebSocketHandler.send_message(
+                f"{num_exceeding_max_gap} out of {self.n} Invalid date gaps value(s) between harvest date and sorting date have been founded, max gap is {self.sorting_gap} hours, give me authority to drop those rows or fix the file and try again (Yes/No): ")
+            authority = await WebSocketHandler.receive_message()
+
+            if authority.lower() == 'yes':
                 self.df = data[data['difference_hours'] <= self.sorting_gap]
                 self.n = len(self.df)
                 if self.n == 0:
-                    raise ValueError(
-                        "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    await WebSocketHandler.send_message("No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    sys.exit(1)
             else:
                 invalid_date_gaps = data[data['difference_hours'] > self.sorting_gap]
                 indices = [i + 2 for i in list(invalid_date_gaps.index)]
-                print(f'\n the invalid samples indices are (the indices as it appears in the Excel file): \n {indices}')
-                raise ValueError("Invalid date gaps value(s) between harvest date and sorting date have been founded")
+                await WebSocketHandler.send_message(
+                    f'\n the invalid samples indices are (the indices as it appears in the Excel file): \n {indices}')
+                sys.exit(1)
 
-    def validate_sampleID(self):
+    async def validate_date_order(self):
+        sorting_datetime_col = self.columns['תאריך מיון']
+        harvest_date_col = self.columns['תאריך קטיף']
+
+        # Create a copy of the DataFrame
+        data = self.df.copy()
+
+        # Convert the date columns to datetime, assuming dayfirst format
+        data[sorting_datetime_col] = pd.to_datetime(data[sorting_datetime_col], dayfirst=True)
+        data[harvest_date_col] = pd.to_datetime(data[harvest_date_col], dayfirst=True).dt.date
+
+        # Identify rows where the sorting datetime is not greater than the harvest date
+        invalid_rows_df = data[data[sorting_datetime_col] < data[harvest_date_col]]
+
+        if not invalid_rows_df.empty:
+            await WebSocketHandler.send_message(
+                f"{len(invalid_rows_df)} out of {self.n} invalid date order(s) found where sorting datetime is not greater than harvest date. Give me authority to drop those rows or fix the file and try again (Yes/No): ")
+            authority = await WebSocketHandler.receive_message()
+
+            if authority.lower() == 'yes':
+                # Drop invalid rows from the copied DataFrame
+                data = data[data[sorting_datetime_col] >= data[harvest_date_col]]
+                self.n = len(data)
+
+                if self.n == 0:
+                    await WebSocketHandler.send_message("No valid rows found to integrate or you gave authority to drop all the rows.")
+                    sys.exit(1)
+
+                # Update the original DataFrame with the cleaned copy
+                self.df = data
+            else:
+                indices = [i + 2 for i in list(invalid_rows_df.index)]
+                await WebSocketHandler.send_message(
+                    f"\nThe invalid sample indices are (the indices as they appear in the Excel file): \n{indices}")
+                sys.exit(1)
+
+    async def validate_sampleID(self):
         sampleID = self.columns['מזהה דגימה']
         data = self.df.copy()
 
@@ -104,18 +141,21 @@ class Validation_Meta:
         duplicates = data[data.duplicated(subset=sampleID, keep=False)]
         n = len(duplicates) // 2
         if n != 0:
-            authority = input(
-                f"{n} out of {self.n} Duplicate Sample IDs founded ({sampleID}), give me authority to drop those rows or fix the file and try again: ")
-            if authority == 'yes':
+            await WebSocketHandler.send_message(
+                f"{n} out of {self.n} Duplicate Sample IDs founded ({sampleID}), give me authority to drop those rows or fix the file and try again (Yes/No): ")
+            authority = await WebSocketHandler.receive_message()
+
+            if authority.lower() == 'yes':
                 self.df = data.drop_duplicates(subset=sampleID, keep='first')
                 self.n = len(self.df)
                 if self.n == 0:
-                    raise ValueError(
-                        "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    await WebSocketHandler.send_message("No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    sys.exit(1)
             else:
                 indices = [i + 2 for i in list(duplicates.index)]
-                print(f'\n the invalid samples indices are (the indices as it appears in the Excel file): \n {indices}')
-                raise ValueError(f"Duplicate Sample IDs founded ({sampleID}).")
+                await WebSocketHandler.send_message(
+                    f'\n the invalid samples indices are (the indices as it appears in the Excel file): \n {indices}')
+                sys.exit(1)
 
         # check if sample id already exists in the dbms
         if not is_empty_dbs():
@@ -125,23 +165,27 @@ class Validation_Meta:
                 if ids in list(data[sampleID]):
                     Existing_ids.append(ids)
             n = len(Existing_ids)
+
             if n != 0:
-                authority = input(
-                    f"{n} out of {self.n} Sample IDs already Exists in the dbms, give me authority to drop those rows or fix the file and try again: ")
-                if authority == 'yes':
+                await WebSocketHandler.send_message(
+                    f"{n} out of {self.n} Sample IDs already Exists in the dbms, give me authority to drop those rows or fix the file and try again (Yes/No): ")
+                authority = await WebSocketHandler.receive_message()
+
+                if authority.lower() == 'yes':
                     self.df = data[~data[sampleID].isin(Existing_ids)]
                     self.n = len(self.df)
                     if self.n == 0:
-                        raise ValueError(
+                        await WebSocketHandler.send_message(
                             "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                        sys.exit(1)
                 else:
                     sampleID_range = get_id_range()
 
-                    print(
+                    await WebSocketHandler.send_message(
                         f'\n valid range for sample ID you can use is less than {sampleID_range[0][0]} or more than {sampleID_range[0][1]}. \n \n the samples IDs that are already exists in the dbms are: \n \n {Existing_ids}')
-                    raise ValueError(f"Existing Samples IDs founded ({sampleID}), that is already exists in the dbms.")
+                    sys.exit(1)
 
-    def validate_parcel_size(self):
+    async def validate_parcel_size(self):
         parcel_size = self.columns['גודל חלקה במר']
         parcel_id = self.columns['חלקה']
         none_count = self.df[parcel_size].isna().sum()
@@ -149,20 +193,25 @@ class Validation_Meta:
         if is_empty_dbs():
             # df.dropna(subset=[column_name], inplace=True)
             if (self.df[parcel_size] == 0).all() or none_count == self.n:
-                raise ValueError(
+                await WebSocketHandler.send_message(
                     f'all values of parcel size column (גודל חלקה במר) is not valid, all Parcels size must not be 0 or empty. please fix the file and try again.')
+                sys.exit(1)
             elif (self.df[parcel_size] == 0).any() or none_count > 0:
-                authority = input(
-                    'The values of parcel size column (גודל חלקה במר) is not valid, some of the Parcels with a size of 0 or empty. please fix the file or give me authority to delete those rows: ')
-                if authority == 'yes':
+                await WebSocketHandler.send_message(
+                    'The values of parcel size column (גודל חלקה במר) is not valid, some of the Parcels with a size of 0 or empty. please fix the file or give me authority to delete those rows (Yes/No): ')
+                authority = await WebSocketHandler.receive_message()
+
+                if authority.lower() == 'yes':
                     self.df = self.df.loc[self.df[parcel_size] != 0]
                     self.df = self.df[self.df[parcel_size].notnull()]
                     self.n = len(self.df)
                     if self.n == 0:
-                        raise ValueError(
+                        await WebSocketHandler.send_message(
                             "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                        sys.exit(1)
                 else:
-                    raise ValueError('please fix parcel size column and try again.')
+                    await WebSocketHandler.send_message('please fix parcel size column and try again.')
+                    sys.exit(1)
 
         else:
             column_names = [parcel_id, parcel_size]
@@ -184,22 +233,27 @@ class Validation_Meta:
             not_valid = count_not_valid(values_not_in_database)
 
             if not_valid == self.n or none_count == self.n:
-                raise ValueError(
+                await WebSocketHandler.send_message(
                     'all values of parcel size column (גודל חלקה במר) is not valid, all Parcels with a size of 0 or empty cell. please correct the values and try again.')
+                sys.exit(1)
             elif not_valid > 0 or none_count > 0:
-                authority = input(
-                    'The values of parcel size column (גודל חלקה במר) is not valid, some of the Parcels with a size of 0 or empty cell. please correct the values or give me authority to delete those rows: ')
-                if authority == 'yes':
+                await WebSocketHandler.send_message(
+                    'The values of parcel size column (גודל חלקה במר) is not valid, some of the Parcels with a size of 0 or empty cell. please correct the values or give me authority to delete those rows (Yes/No): ')
+                authority = await WebSocketHandler.receive_message()
+
+                if authority.lower() == 'yes':
                     self.df = self.df.loc[self.df[parcel_size] != 0]
                     self.df = self.df[self.df[parcel_size].notnull()]
                     self.n = len(self.df)
                     if self.n == 0:
-                        raise ValueError(
+                        await WebSocketHandler.send_message(
                             "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                        sys.exit(1)
                 else:
-                    raise ValueError('please fix parcel size column and try again.')
+                    await WebSocketHandler.send_message('please fix parcel size column and try again.')
+                    sys.exit(1)
 
-    def validate_exists_herb_name_info(self):
+    async def validate_exists_herb_name_info(self):
         knh = candidate_column('כנה', self.columns)
         rokev = candidate_column('רכב', self.columns)
         if ('זן' in self.columns.keys()) and self.df[self.columns['זן']].isnull().sum() != self.n:
@@ -251,24 +305,26 @@ class Validation_Meta:
                 self.df['HerbName'] = str(self.df[self.columns[knh]]).strip()
 
         else:
-            raise ValueError(
-                'missing herb name information, please add the missing information to the file and try again.')
+            await WebSocketHandler.send_message('missing herb name information, please add the missing information to the file and try again.')
+            sys.exit(1)
 
         none_count = self.df['HerbName'].isna().sum()
         if none_count > 0:
-            authority = input(
-                'There is {none_count} out of {self.n} records with missing herb name information, please correct the values or give me authority to delete those rows: ')
-            if authority == 'yes':
+            await WebSocketHandler.send_message(
+                'There is {none_count} out of {self.n} records with missing herb name information, please correct the values or give me authority to delete those rows (Yes/No): ')
+            authority = await WebSocketHandler.receive_message()
+
+            if authority.lower() == 'yes':
                 self.df = self.df.loc[self.df['HerbName'].notnull()]
                 self.n = len(self.df)
                 if self.n == 0:
-                    raise ValueError(
-                        "No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    await WebSocketHandler.send_message("No valid rows founded to integrate or you gave the autherity to drop all the rows.")
+                    sys.exit(1)
             else:
-                raise ValueError('please correct the values and try again.')
+                await WebSocketHandler.send_message('please correct the values and try again.')
+                sys.exit(1)
 
-                # no need to do
-
+    # no need to do
     def validate_herb_name_info_with_dbms(self, column_name='HerbName', table_name='ParcelMetaData'):
         # nothing to check dbms is empty
         if is_empty_dbs():

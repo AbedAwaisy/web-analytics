@@ -1,3 +1,7 @@
+import pandas as pd
+from integrations.Helpper_Functions import *
+
+
 class Cemical_Extraction:
     def __init__(self, df, experiment=None):
         self.df = df
@@ -28,4 +32,3 @@ class Cemical_Extraction:
                                        'Glucose': self.df[self.columns['גלוקוז']].astype(float)}, index=self.df.index)
 
         return cemical_df
-

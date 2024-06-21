@@ -4,6 +4,9 @@ import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
+from integrations.Integrator_Wrapper import Integrator
+from integrations.WebSocket import WebSocketHandler
+
 app = FastAPI()
 
 app.add_middleware(
@@ -34,6 +37,7 @@ async def upload_file(file: UploadFile = File(...)):
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    WebSocketHandler.websocket = websocket
     await websocket.accept()
     try:
         file_name = await websocket.receive_text()

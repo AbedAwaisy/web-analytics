@@ -1,7 +1,7 @@
 import mysql.connector
 from difflib import SequenceMatcher
 import numpy as np
-# import Levenshtein
+import Levenshtein
 import os
 
 from dotenv import load_dotenv
