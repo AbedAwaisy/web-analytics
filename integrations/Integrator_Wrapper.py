@@ -8,8 +8,6 @@ from integrations.Insertion import *
 from integrations.Validation_Yield import Validation_Yield
 from integrations.Helpper_Functions import *
 
-# I used the function names: send_message to send and, receive_message to receive
-
 
 class Integrator:
     def __init__(self, websocket: WebSocket, file_path: str):
@@ -95,7 +93,7 @@ class Integrator:
         await validator_meta.validate_date_order()
         await validator_meta.validate_parcel_size()
         await validator_meta.validate_exists_herb_name_info()
-        validator_meta.validate_herb_name_info_with_dbms()
+        await validator_meta.validate_herb_name_info_with_dbms()
 
         Meta_Extractor = Meta_Extraction(validator_meta.df)
         meta = Meta_Extractor.extract_Meta()
@@ -119,6 +117,8 @@ class Integrator:
                 await Validateor_Quality.validate_scratches_virus()
                 await Validateor_Quality.validate_general_appereance()
                 await Validateor_Quality.validate_color_virus()
+                await Validateor_Quality.validate_fruiet_number()
+
                 Quality_Extractor = Quality_Extraction(Validateor_Quality.df, exp)
                 q = Quality_Extractor.extract_Quality()
 
@@ -127,7 +127,10 @@ class Integrator:
                 Validateor_Yield = Validation_Yield(y_df)
                 await Validateor_Yield.validate_cluster_harvest()
                 await Validateor_Yield.validate_single_harvest()
-                await Validateor_Yield.validate_single_harvest_number()
+                await Validateor_Yield.validate_numeric_cols()
+                await Validateor_Yield.validate_rows()
+                # await Validateor_Yield.validate_single_harvest_number()
+
                 Yield_Extractor = Yield_Extraction(Validateor_Yield.df, exp)
                 y = Yield_Extractor.extract_Yield()
 

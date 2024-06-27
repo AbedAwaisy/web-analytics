@@ -1,7 +1,6 @@
 from integrations.Helpper_Functions import *
 import mysql.connector
 import numpy as np
-# websocket import, the file name is websocket
 from integrations.WebSocket import *
 
 
@@ -16,28 +15,30 @@ class Insertion:
     async def insert(self):
         if len(self.meta) != 0:
             try:
-                self.Insert_Meta()
+                await self.Insert_Meta()
                 if self.exp:
                     if self.c is not None:
-                        self.Insert_Cemical_With_Experiment()
+                        await self.Insert_Cemical_With_Experiment()
                     if self.q is not None:
-                        self.Insert_Quality_With_Experiment()
+                        await self.Insert_Quality_With_Experiment()
                     if self.y is not None:
-                        self.Insert_Yield_With_Experiment()
+                        await self.Insert_Yield_With_Experiment()
                 else:
                     if self.c is not None:
-                        self.Insert_Cemical_Without_Experiment()
+                        await self.Insert_Cemical_Without_Experiment()
                     if self.q is not None:
-                        self.Insert_Quality_Without_Experiment()
+                        await self.Insert_Quality_Without_Experiment()
                     if self.y is not None:
-                        self.Insert_Yield_Without_Experiment()
+                        await self.Insert_Yield_Without_Experiment()
 
-                await WebSocketHandler.send_message(f'File succesfully Integrated to the DBS. {len(self.meta)} rows inserted')
+                await WebSocketHandler.send_message(
+                    f'File succesfully Integrated to the DBS. {len(self.meta)} rows inserted')
 
             except mysql.connector.Error as error:
                 await WebSocketHandler.send_message('the data is already in the data base.')
         else:
-            await WebSocketHandler.send_message('you gave the authirity to remove corrputed data which is all the file data.')
+            await WebSocketHandler.send_message(
+                'you gave the authirity to remove corrputed data which is all the file data.')
 
     async def Insert_Meta(self):
         # Establish MySQL connection (replace with your connection details)
@@ -54,11 +55,11 @@ class Insertion:
                 row['SortingType'], row['ParcelSize']))
             # Commit the transaction
             connection.commit()
-            await WebSocketHandler.send_message(f"{len(self.meta)} rows inserted successfully into MySQL table: ", table_name)
+            await WebSocketHandler.send_message(f"{len(self.meta)} rows inserted successfully into MySQL table: {table_name}")
 
         except mysql.connector.Error as error:
             # raise(error)
-            await WebSocketHandler.send_message("Error inserting data:", error)
+            await WebSocketHandler.send_message(f"Error inserting data: {error}")
 
         finally:
             # Close the connection
@@ -77,10 +78,10 @@ class Insertion:
                 cursor.execute(sql, (row['SampleID'], row['TSS'], row['TA'], row['Glucose']))
             # Commit the transaction
             connection.commit()
-            await WebSocketHandler.send_message(f"{len(self.c)} rows inserted successfully into MySQL table: ", table_name)
+            await WebSocketHandler.send_message(f"{len(self.c)} rows inserted successfully into MySQL table: {table_name}")
 
         except mysql.connector.Error as error:
-            await WebSocketHandler.send_message("Error inserting data:", error)
+            await WebSocketHandler.send_message(f"Error inserting data: {error}")
 
         finally:
             # Close the connection
@@ -102,10 +103,10 @@ class Insertion:
                 row['Glucose']))
             # Commit the transaction
             connection.commit()
-            await WebSocketHandler.send_message(f"{len(self.c)} rows inserted successfully into MySQL table: ", table_name)
+            await WebSocketHandler.send_message(f"{len(self.c)} rows inserted successfully into MySQL table: {table_name}")
 
         except mysql.connector.Error as error:
-            await WebSocketHandler.send_message("Error inserting data:", error)
+            await WebSocketHandler.send_message(f"Error inserting data: {error}")
 
         finally:
             # Close the connection
@@ -120,7 +121,7 @@ class Insertion:
         sql = f"INSERT INTO {table_name} (SampleID,ExperimentType,ExperimentParameter,Weight,FruietNumber,VineFreshness,Fallen,Cracked,Firm,Flexible,Soft,Rotten,ColorDefect,Missing,VineRot,Shade,GeneralAppearance,ColorVirus,ScratchesVirus) VALUES (%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s)"
         # Insert data into MySQL table
         try:
-            self.q.columns = ['SampleID', 'ExperimentType', 'ExperimentParameter', 'Weight', 'FruietNumber',
+            self.q.columns = ['SampleID', 'ExperimentParameter', 'ExperimentType', 'Weight', 'FruietNumber',
                               'VineFreshness', 'Fallen', 'Cracked', 'Firm', 'Flexible', 'Soft', 'Rotten', 'ColorDefect',
                               'Missing', 'VineRot', 'Shade', 'GeneralAppearance', 'ColorVirus', 'ScratchesVirus']
             for index, r in self.q.iterrows():
@@ -131,10 +132,10 @@ class Insertion:
                 r['ScratchesVirus']))
             # Commit the transaction
             connection.commit()
-            await WebSocketHandler.send_message(f"{len(self.q)} rows inserted successfully into MySQL table: ", table_name)
+            await WebSocketHandler.send_message(f"{len(self.q)} rows inserted successfully into MySQL table: {table_name}")
 
         except mysql.connector.Error as error:
-            await WebSocketHandler.send_message("Error inserting data:", error)
+            await WebSocketHandler.send_message(f"Error inserting data: {error}")
 
         finally:
             # Close the connection
@@ -158,10 +159,10 @@ class Insertion:
                 r['GeneralAppearance'], r['ColorVirus'], r['ScratchesVirus']))
             # Commit the transaction
             connection.commit()
-            await WebSocketHandler.send_message(f"{len(self.q)} rows inserted successfully into MySQL table: ", table_name)
+            await WebSocketHandler.send_message(f"{len(self.q)} rows inserted successfully into MySQL table: {table_name}")
 
         except mysql.connector.Error as error:
-            await WebSocketHandler.send_message("Error inserting data:", error)
+            await WebSocketHandler.send_message(f"Error inserting data: {error}")
 
         finally:
             # Close the connection
@@ -177,7 +178,7 @@ class Insertion:
         # Insert data into MySQL table
         try:
             self.y.replace({np.nan: None}, inplace=True)
-            self.y.columns = ['SampleID', 'ExperimentType', 'ExperimentParameter', 'ClusterHarvesd', 'SingleHarvesd',
+            self.y.columns = ['SampleID', 'ExperimentParameter', 'ExperimentType', 'ClusterHarvesd', 'SingleHarvesd',
                               'SingleHarvesdNumber', 'GreenFruits', 'CrackedFruits', 'BlackPitDefect',
                               'BlackPitDefectNumber', 'Others', 'PlantProtection', 'Virus']
             for index, row in self.y.iterrows():
@@ -188,10 +189,10 @@ class Insertion:
                 row['Virus']))
             # Commit the transaction
             connection.commit()
-            await WebSocketHandler.send_message(f"{len(self.y)} rows inserted successfully into MySQL table: ", table_name)
+            await WebSocketHandler.send_message(f"{len(self.y)} rows inserted successfully into MySQL table: {table_name}")
 
         except mysql.connector.Error as error:
-            await WebSocketHandler.send_message("Error inserting data:", error)
+            await WebSocketHandler.send_message(f"Error inserting data: {error}")
 
         finally:
             # Close the connection
@@ -217,10 +218,10 @@ class Insertion:
                 row['Others'], row['PlantProtection'], row['Virus']))
             # Commit the transaction
             connection.commit()
-            await WebSocketHandler.send_message(f"{len(self.y)} rows inserted successfully into MySQL table: ", table_name)
+            await WebSocketHandler.send_message(f"{len(self.y)} rows inserted successfully into MySQL table: {table_name}")
 
         except mysql.connector.Error as error:
-            await WebSocketHandler.send_message("Error inserting data:", error)
+            await WebSocketHandler.send_message(f"Error inserting data: {error}")
 
         finally:
             # Close the connection

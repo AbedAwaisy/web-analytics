@@ -1,0 +1,91 @@
+CREATE DEFINER=`root`@`%` PROCEDURE `ClearAllTables`()
+BEGIN
+    -- Disable foreign key checks to avoid constraints issues
+    SET FOREIGN_KEY_CHECKS = 0;
+
+    TRUNCATE TABLE Cemical_With_Experiment;
+    TRUNCATE TABLE Cemical_Without_Experiment;
+    TRUNCATE TABLE Quality_With_Experiment;
+    TRUNCATE TABLE Quality_Without_Experiment;
+    TRUNCATE TABLE Yield_With_Experiment;
+    TRUNCATE TABLE Yield_Without_Experiment;
+    TRUNCATE TABLE ParcelMetaData;
+
+    -- Re-enable foreign key checks
+    SET FOREIGN_KEY_CHECKS = 1;
+END
+
+###################################
+
+CREATE DEFINER=`root`@`%` PROCEDURE `GetExperimentOptionsBySortType`(
+    IN sortType VARCHAR(50)
+)
+BEGIN
+    DECLARE viewName VARCHAR(50);
+
+    -- Determine the view name based on the sortType
+    SET viewName = CASE sortType
+        WHEN 'רגיל' THEN 'UniqueYieldExperimentTypes' -- Provide appropriate sortType values
+        WHEN 'איכותquality' THEN 'UniqueQualityExperimentTypes'
+        WHEN 'כימי' THEN 'UniqueChemicalExperimentTypes'
+        ELSE NULL
+    END;
+
+    IF viewName IS NULL THEN
+        SELECT 'Invalid sort type' AS Result;
+    ELSE
+        -- Construct the SQL query to select data from the determined view
+        SET @sql = CONCAT('SELECT * FROM ', viewName);
+        -- Execute the SQL query
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt;
+        -- Deallocate the prepared statement to free up resources
+        DEALLOCATE PREPARE stmt;
+    END IF;
+END
+
+
+###################################
+
+
+CREATE DEFINER=`root`@`%` PROCEDURE `JoinTables`(
+    IN p_sortType VARCHAR(50),
+    IN p_experimentType VARCHAR(50)
+)
+BEGIN
+    DECLARE main_table VARCHAR(50);
+    DECLARE table2_name VARCHAR(50);
+
+    -- Determine table names based on sortType and experimentType
+    SET main_table = 'ParcelMetaData';
+    IF p_sortType = 'כימי' THEN
+        IF p_experimentType = 'ללא בדיקה' THEN
+            SET table2_name = 'Cemical_Without_Experiment';
+        ELSEIF p_experimentType = 'כל הבדיקות' THEN
+            SET table2_name = 'Cemical_With_Experiment';
+        END IF;
+    ELSEIF p_sortType = 'רגיל' THEN
+        IF p_experimentType = 'ללא בדיקה' THEN
+            SET table2_name = 'Yield_Without_Experiment';
+        ELSE
+            SET table2_name = 'Yield_With_Experiment';
+        END IF;
+    ELSEIF p_sortType = 'איכותquality' THEN
+        IF p_experimentType = 'None' THEN
+            SET table2_name = 'Z_Without_Experiment';
+        ELSE
+            SET table2_name = 'Z_With_Experiment';
+        END IF;
+    ELSE
+        -- Handle invalid sortType
+        SELECT 'Invalid sortType' AS Result;
+    END IF;
+
+    -- Construct and execute the join query
+    SET @sql = CONCAT('SELECT * FROM ', main_table, ' JOIN ', table2_name, ' ON ', main_table, '.SampleID = ', table2_name, '.SampleID');
+
+    PREPARE stmt FROM @sql;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+
+END

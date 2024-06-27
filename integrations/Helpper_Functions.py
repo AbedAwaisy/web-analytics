@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 # Load environment variables from the .env file
 load_dotenv()
 
+
 # helpper function [no need to do any thing]
 
 def connect():
@@ -23,8 +24,7 @@ def connect():
     return conn
 
 
-
-def is_empty_dbs(table_name = 'ParcelMetaData'):
+def is_empty_dbs(table_name='ParcelMetaData'):
     connection = connect()
     cursor = connection.cursor()
     cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
@@ -32,12 +32,12 @@ def is_empty_dbs(table_name = 'ParcelMetaData'):
     cursor.close()
     connection.close()
     if row_count == 0:
-        return  True
+        return True
 
     return False
 
 
-def get_herbs_dbs(table_name = 'ParcelMetaData', column_name = 'HerbName'):
+def get_herbs_dbs(table_name='ParcelMetaData', column_name='HerbName'):
     connection = connect()
     cursor = connection.cursor()
     cursor.execute(f"SELECT DISTINCT {column_name} FROM {table_name}")
@@ -46,7 +46,8 @@ def get_herbs_dbs(table_name = 'ParcelMetaData', column_name = 'HerbName'):
     connection.close()
     return unique_values
 
-def get_id_range(table_name = 'ParcelMetaData', column_name = 'SampleID'):
+
+def get_id_range(table_name='ParcelMetaData', column_name='SampleID'):
     connection = connect()
     cursor = connection.cursor()
     cursor.execute(f"SELECT MIN({column_name}) as min_value, MAX({column_name}) as max_value FROM {table_name}")
@@ -55,7 +56,8 @@ def get_id_range(table_name = 'ParcelMetaData', column_name = 'SampleID'):
     connection.close()
     return unique_values
 
-def get_existing_ids(table_name = 'ParcelMetaData', id_column = 'SampleID'):
+
+def get_existing_ids(table_name='ParcelMetaData', id_column='SampleID'):
     connection = connect()
     cursor = connection.cursor()
     cursor.execute(f"SELECT {id_column} FROM {table_name}")
@@ -64,28 +66,31 @@ def get_existing_ids(table_name = 'ParcelMetaData', id_column = 'SampleID'):
     connection.close()
     return existing_ids
 
-def columns_mapper(df):
-  columns = df.columns.to_list()
-  clean_columns = {}
-  for c in columns:
-    if 'Unnamed:' not in c:
-      #c_hat = ' '.join(c.split())
-      c_hat = c.strip()
-      clean_columns[c_hat] = c
 
-  return clean_columns
+def columns_mapper(df):
+    columns = df.columns.to_list()
+    clean_columns = {}
+    for c in columns:
+        if 'Unnamed:' not in c:
+            # c_hat = ' '.join(c.split())
+            c_hat = c.strip()
+            clean_columns[c_hat] = c
+
+    return clean_columns
+
 
 def count_not_valid(lst):
-  c = 0
-  for item in lst:
-    if item[1] == 0:
-      c += 1
-  return c
+    c = 0
+    for item in lst:
+        if item[1] == 0:
+            c += 1
+    return c
+
 
 def string_similarity(s1, s2):
     # Create a SequenceMatcher object
     if s1.isdigit():
-      return 0
+        return 0
 
     seq_matcher = SequenceMatcher(None, s1, s2)
 
@@ -93,6 +98,7 @@ def string_similarity(s1, s2):
     similarity_ratio = seq_matcher.ratio()
 
     return similarity_ratio
+
 
 def remove_outliers_iqr(df, column_name):
     # Calculate the first quartile (Q1) and third quartile (Q3)
@@ -111,20 +117,23 @@ def remove_outliers_iqr(df, column_name):
 
     return cleaned_df
 
+
 def remove_outliers_zscore(df, column_name, threshold=3):
     # Calculate the Z-score for each data point
     z_scores = np.abs((df[column_name] - df[column_name].mean()) / df[column_name].std())
-    
+
     # Remove the outliers
     df_filtered = df[z_scores <= threshold]
 
     # Return the filtered DataFrame and the indices of the removed outliers
     return df_filtered
 
+
 def cap_values(df, columns_to_check, reference_column):
     for col in columns_to_check:
         df[col] = df.apply(lambda row: min(row[col], row[reference_column]), axis=1)
     return df
+
 
 def generate_levenshtein_distance_1(word):
     letters = '-אבגדהוזחטיכלמוןצעפתקרשת'
@@ -135,6 +144,7 @@ def generate_levenshtein_distance_1(word):
     substitutes = [L + c + R[1:] for L, R in splits if R for c in letters]
 
     return set(deletes + inserts + substitutes)
+
 
 def generate_levenshtein_distance_1_2(word):
     distance_1_words = generate_levenshtein_distance_1(word).union(word)
@@ -148,6 +158,7 @@ def generate_levenshtein_distance_1_2(word):
 
     return distance_1_words.union(distance_2_words)
 
+
 def candidate_column(column_name, columns):
     Levenshtein_candidates = generate_levenshtein_distance_1_2(column_name)
     candidate = None
@@ -159,43 +170,43 @@ def candidate_column(column_name, columns):
             candidate = temp_cand
         if candidate is not None:
             break
-        
-        
+
     return candidate
-            
+
+
 def FruietNumber_Integrator(df, c):
-  threshold = len(df) * 0.1  # Define a threshold
-  data = df.copy()
-  # Count the number of values that are not 0 or 20
-  count_different_values = df[c].nunique()
-  if count_different_values <= threshold:
-      
-    data[c] = -1
-    return data
-      
-  else:
-     df1 = remove_outliers_iqr(df, c)
-     return df1
+    threshold = len(df) * 0.1  # Define a threshold
+    data = df.copy()
+    # Count the number of values that are not 0 or 20
+    count_different_values = df[c].nunique()
+    if count_different_values <= threshold:
+
+        data[c] = -1
+        return data
+
+    else:
+        df1 = remove_outliers_iqr(df, c)
+        return df1
 
 
 def Meta_to_keep(df1, df2, df3, df4):
     # Union of df1, df2, and df3 based on the 'id' column
     union_ids = set()
-    
+
     if df1 is not None:
         union_ids.update(df1['SampleID'].unique())
-    
+
     if df2 is not None:
         union_ids.update(df2['SampleID'].unique())
-    
+
     if df3 is not None:
         union_ids.update(df3['SampleID'].unique())
-    
+
     # Keep only rows in df4 where the 'id' is in the union of df1, df2, and df3
     df4_filtered = df4[df4['SampleID'].isin(union_ids)]
     return df4_filtered
 
-            
+
 def check_valid_single_harvest(row, col1, col2):
     if row[col1] == 0 and row[col2] != 0:
         row[col2] = 0
@@ -203,9 +214,44 @@ def check_valid_single_harvest(row, col1, col2):
         row[col2] = -1
     return row
 
+
 def update_single_harvest_number(df, col1, col2):
     return df.apply(check_valid_single_harvest, axis=1, col1=col1, col2=col2)
-    
+
+
+def filter_rows(row, col1, col2, column_name):
+    max_value = max(row[col1], row[col2])
+    if row[column_name] == 0:
+        return True
+    else:
+        if max_value == 0:
+            return True
+        else:
+            return row[column_name] < max_value
+
+
+# Define the function to count non-zero identical values in a row
+def count_identical_non_zero(row):
+    # Create a dictionary to count occurrences of each value
+    value_counts = {}
+
+    for value in row:
+        if value in value_counts:
+            value_counts[value] += 1
+        else:
+            value_counts[value] = 1
+
+        # Check if any value has at least 4 occurrences
+        if value != 0:
+            if value_counts[value] >= 4:
+                return False
+
+    return True
+
+
+def is_integer_whole_number(x):
+    return isinstance(x, int) or (isinstance(x, float) and x.is_integer())
+
 
 # Test the connection
 if __name__ == "__main__":

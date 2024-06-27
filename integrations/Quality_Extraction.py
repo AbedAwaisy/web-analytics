@@ -9,13 +9,10 @@ class Quality_Extraction:
         self.columns = columns_mapper(self.df)
 
     def extract_Quality(self):
-        result_columns = ['משקל weight', 'רעננות שדרהvine freshness', 'נפליםfallen', 'מפוצציםcracked', 'מוצקיםfirm',
-                          'גמישיםflexible', 'רכיםsoft', 'רקוביםrotten', 'חריגי צבעcolor defect', 'רקבון שזרהvine rot',
-                          'חסריםmissing', 'גווןshade', 'מראה כלליgeneral appearance', 'וירוס צבעcolor virus',
-                          'וירוס שריטותscratches virus']
-        ordinal_columns = []
-        for c in result_columns:
-            self.df = remove_outliers_iqr(self.df, self.columns[c])
+        # result_columns = ['משקל weight', 'רעננות שדרהvine freshness', 'נפליםfallen', 'מפוצציםcracked', 'מוצקיםfirm', 'גמישיםflexible', 'רכיםsoft', 'רקוביםrotten', 'חריגי צבעcolor defect', 'רקבון שזרהvine rot', 'חסריםmissing', 'גווןshade', 'מראה כלליgeneral appearance', 'וירוס צבעcolor virus', 'וירוס שריטותscratches virus']
+        # ordinal_columns = []
+        # for c in result_columns:
+        #   self.df = remove_outliers_iqr(self.df, self.columns[c])
 
         Quality_df = pd.DataFrame({'SampleID': self.df[self.columns['מזהה דגימה']].astype(int),
                                    'Weight': self.df[self.columns['משקל weight']].astype(float),

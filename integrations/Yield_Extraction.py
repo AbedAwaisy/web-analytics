@@ -9,12 +9,11 @@ class Yield_Extraction:
         self.columns = columns_mapper(self.df)
 
     def extract_Yield(self):
-        result_columns = ['יצוא אשכולות', 'יצוא בודדים', 'יצוא בודדים מספר', 'ירוקים', 'סדוקים', 'שחור פיטם',
-                          'שחור פיטם מספר', 'אחרים', 'הגנת הצומח', 'וירוס']
-        self.df = FruietNumber_Integrator(self.df, self.columns['יצוא בודדים מספר'])
+        # result_columns = ['יצוא אשכולות', 'יצוא בודדים', 'יצוא בודדים מספר', 'ירוקים', 'סדוקים', 'שחור פיטם', 'שחור פיטם מספר', 'אחרים', 'הגנת הצומח', 'וירוס']
+        # self.df = FruietNumber_Integrator(self.df, self.columns['יצוא בודדים מספר'])
 
-        for c in result_columns:
-            self.df = remove_outliers_iqr(self.df, self.columns[c])
+        # for c in result_columns:
+        #   self.df = remove_outliers_iqr(self.df, self.columns[c])
 
         Yield_df = pd.DataFrame({'SampleID': self.df[self.columns['מזהה דגימה']].astype(int),
                                  'ClusterHarvesd': self.df[self.columns['יצוא אשכולות']].astype(float),
