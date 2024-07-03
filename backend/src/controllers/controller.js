@@ -21,15 +21,29 @@ const dataController = {
   insertUser: async (req, res) => {
     try {
       const { name, email, password, mop } = req.body;
-      const sqlQuery = 'INSERT INTO users (name, email, password, mop) VALUES (?, ?, ?, ?)';
-      pool.query(sqlQuery, [name, email, password, mop], (err, result) => {
+
+      const checkEmailQuery = 'SELECT * FROM users WHERE email = ?';
+      pool.query(checkEmailQuery, [email], async (err, results) => {
         if (err) {
-          console.error('Error inserting user:', err);
-          res.status(500).json({ message: 'Error inserting user', error: err });
-        } else {
-          console.log('User inserted successfully');
-          res.status(200).json({ message: 'User inserted successfully' });
+          console.error('Error checking email:', err);
+          return res.status(500).json({ message: 'Error checking email', error: err });
         }
+
+        if (results.length > 0) {
+          console.log('User already exists:', email);
+          return res.status(400).json({ message: 'User already exists' });
+        }
+        const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
+        const sqlQuery = 'INSERT INTO users (name, email, password, mop) VALUES (?, ?, ?, ?)';
+        pool.query(sqlQuery, [name, email, hashedPassword, mop], (err, result) => {
+          if (err) {
+            console.error('Error inserting user:', err);
+            res.status(500).json({ message: 'Error inserting user', error: err });
+          } else {
+            console.log('User inserted successfully:', email);
+            res.status(200).json({ message: 'User inserted successfully' });
+          }
+        });
       });
     } catch (error) {
       console.error('Error inserting user:', error);
@@ -40,25 +54,28 @@ const dataController = {
   loginUser: async (req, res) => {
     try {
       const { email, password } = req.body;
-      const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
-      pool.query(sql, [email, password], (err, data) => {
+      const sql = 'SELECT * FROM users WHERE email = ?';
+      pool.query(sql, [email], async (err, data) => {
         if (err) {
           console.error('Error querying database:', err);
           return res.json("Error");
         }
         if (data.length > 0) {
-          req.session.user = email;
-          return res.json("Success");
+          const match = await bcrypt.compare(password, data[0].password); // Compare hashed passwords
+          if (match) {
+            req.session.user = email;
+            return res.json("Success");
+          } else {;
+            return res.json("Fail");
+          }
         } else {
           return res.json("Fail");
         }
       });
     } catch (error) {
-      console.error('Error logging in:', error);
       res.status(500).json({ message: 'Error logging in. Please try again.' });
     }
   },
-
   uploadData: async (req, res) => {
     try {
       const file = req.file.buffer;
