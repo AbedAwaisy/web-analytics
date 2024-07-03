@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import {uploadFile} from '../api/api.js';
+import { uploadFile } from '../api/api.js';
+import './Integration.css'; // Import the CSS file
 
 const Integration = () => {
   const [file, setFile] = useState(null);
@@ -37,9 +38,9 @@ const Integration = () => {
 
   return (
     <div>
-      <h2>Integration</h2>
-      <form onSubmit={handleFormSubmit}>
-        <input type="file" onChange={handleFileChange} />
+      <h2 className='title'>Choose Tomato Data File</h2>
+      <form onSubmit={handleFormSubmit}className="uploadForm">
+        <input type="file" onChange={handleFileChange} className="fileInputControl" />
         <div
           onDrop={handleDrop}
           onDragOver={(event) => {
@@ -49,18 +50,12 @@ const Integration = () => {
           }}
           onDragEnter={() => setDragging(true)}
           onDragLeave={() => setDragging(false)}
-          style={{
-            border: `2px solid ${dragging ? 'blue' : 'black'}`,
-            backgroundColor: dragging ? 'lightblue' : 'white',
-            padding: '20px',
-            marginTop: '20px',
-            borderRadius: '10px',
-          }}
+          className={`fileInput ${dragging ? 'dragging' : ''}`}
         >
           <p>{file ? `Selected file: ${file.name}` : 'Drag and drop file here'}</p>
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Upload</button>
+        {error && <p className="errorMessage">{error}</p>}
+        <button type="submit" className="uploadButton">Upload</button>
       </form>
     </div>
   );

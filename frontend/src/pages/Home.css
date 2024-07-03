@@ -1,5 +1,5 @@
 .home-container {
-    max-width: 800px;
+    max-width: 2000px;
     margin: 0 auto;
     padding: 20px;
   }
@@ -10,6 +10,8 @@
     padding: 15px;
     border-radius: 8px;
     transition: box-shadow 0.3s ease-in-out; /* Adding a subtle box-shadow transition */
+    margin-top: 35px;
+    font-size: 1.5rem;
   }
   
   .mop-container:hover {
@@ -17,7 +19,7 @@
   }
   
   .mop-title {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #333;
   }
@@ -26,16 +28,40 @@
     margin-top: 10px;
     color: #666;
   }
-  
-  .learn-more-link {
-    display: inline-block;
-    margin-top: 10px;
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .learn-more-link:hover {
-    text-decoration: underline;
-  }
-  
+
+.learn-more-link {
+  display: inline-block;
+  margin-top: 20px;
+  color: #007bff;; /* Ensure the link color is black */
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: color 0.3s ease-in-out; 
+}
+
+.learn-more-link:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+body {
+  background-color:#F5F5F5; /* Light blue background */
+}
+
+.scroll-about-us{
+  display: inline-block;
+  margin-top: 20px;
+  color:  #007bff; 
+  text-decoration: underline;
+}
+.scroll-about-us:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+.about-us-section{
+  display: inline-block;
+  margin-top: 10px;
+  color: black;
+  height: 50vh;
+}

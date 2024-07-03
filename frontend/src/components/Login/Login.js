@@ -41,52 +41,60 @@ const Login = ({ onLogin }) => {
     }
 
     // Make a login request to the backend
-     const loginData = { email, password };
-     const response = await loginUser(loginData, setErrors);
+    const loginData = { email, password };
+    const response = await loginUser(loginData, setErrors);
 
-     if (response==="Success") {
-         navigate('/home');
-
-      }
-      else{
-        alert("No user existed");
-      }
-
+    if (response === "Success") {
+      navigate('/home');
+    } else {
+      alert("No user existed");
+    }
   };
+
   return (
-    <div className='stylescontainer'>
-      <h2 className='stylestitle'>Login</h2>
-      <label className='styleslabel'>Email:</label>
-      <input
-        className='stylesinput'
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      {errors.email && <p className='styleserror'>{errors.email}</p>}
+    <div className="full-height">
+      <div className='stylescontainer'>
+      <div className="bengurionlogo">
+        <img src="/images/BenGurion.png" alt="Tomato" className="BenGurionimage" />
+      </div>
+      <div className="Tomatologo">
+        <img src="/images/logo.png" alt="Tomato" className="Tomatoimage" />
+      </div>
+        <h2 className='stylestitle'>Tomato Data Project - Login</h2>
+        <label className='styleslabel'>Email:</label>
+        <input
+          className='stylesinput'
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+        />
+        {errors.email && <p className='styleserror'>{errors.email}</p>}
 
-      <label className='styleslabel'>Password:</label>
-      <input
-        className='stylesinput'
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      {errors.password && <p className='styleserror'>{errors.password}</p>}
+        <label className='styleslabel'>Password:</label>
+        <input
+          className='stylesinput'
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter your password"
+        />
+        {errors.password && <p className='styleserror'>{errors.password}</p>}
 
-      <button className='stylesbutton' onClick={handleLogin}>
-        Login
-      </button>
+        <button className='stylesbutton' onClick={handleLogin}>
+          Login
+        </button>
 
-      {/* Link to navigate to the Forgot Password page */}
-      <p className='styleslink'>
-        <Link to="/forgotpassword">Forgot your password?</Link>
-      </p>
+        {/* Link to navigate to the Forgot Password page        <p className='styleslink'>
+          <Link to="/forgotpassword">Forgot your password?</Link>
+        </p> */}
 
-      {/* Link to navigate to the Register page */}
-      <p className='styleslink'>
-        Don't have an account? <Link to="/register">Register here</Link>.
-      </p>
+
+        {/* Link to navigate to the Register page */}
+        <p className='styleslink'>
+          Don't have an account? <Link to="/register">Register here</Link>.
+        </p>
+      </div>
     </div>
   );
 };

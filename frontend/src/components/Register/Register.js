@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link} from 'react-router-dom';
+import { Link,useNavigate} from 'react-router-dom';
 import './Register.css';
 import { insertUserToDB } from '../../api/api'; // Adjust the path based on the actual location of api.js
 
@@ -8,6 +8,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mop, setMop] = useState('');
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({
     name: '',
     email: '',
@@ -79,29 +80,41 @@ const Register = () => {
   };
 
   return (
+  <div className="full-height">
     <div className='stylescontainer'>
-      <h2 className='stylestitle'>Register</h2>
+    <div className="bengurionlogo-register">
+        <img src="/images/BenGurion.png" alt="Tomato" className="BenGurionimage-register" />
+      </div>
+      <div className="Tomatologo">
+        <img src="/images/logo.png" alt="Tomato" className="Tomatoimage" />
+      </div>
+        <h2 className='stylestitle'>Tomato Data Project -Register</h2>
 
       <label className='styleslabel'>Name:</label>
-      <input type="text" className='stylesinput' value={name} onChange={(e) => setName(e.target.value)} />
+      <input type="text" className='stylesinput' value={name} onChange={(e) => setName(e.target.value)} 
+      placeholder="Enter your name"/>
       {errors.name && <p className='styleserror'>{errors.name}</p>}
 
       <label className='styleslabel'>Email:</label>
-      <input type="email" className='stylesinput' value={email} onChange={(e) => setEmail(e.target.value)} />
+      <input type="email" className='stylesinput' value={email} onChange={(e) => setEmail(e.target.value)} 
+      placeholder="Enter your email"/>
       {errors.email && <p className='styleserror'>{errors.email}</p>}
 
       <label className='styleslabel'>Password:</label>
-      <input type="password" className='stylesinput' value={password} onChange={(e) => setPassword(e.target.value)} />
+      <input type="password" className='stylesinput' value={password} onChange={(e) => setPassword(e.target.value)}
+      placeholder="Enter your password" />
       {errors.password && <p className='styleserror'>{errors.password}</p>}
 
       <label className='styleslabel'>MopName:</label>
-      <input type="text" className='stylesinput' value={mop} onChange={(e) => setMop(e.target.value)} />
+      <input type="text" className='stylesinput' value={mop} onChange={(e) => setMop(e.target.value)}
+      placeholder="Enter your MopName" />
       {errors.mop && <p className='styleserror'>{errors.mop}</p>}
 
       <button className='stylesbutton' onClick={handleRegister}>Register</button>
-      <p className='styleslink'>
-          <Link to="/login"> log in</Link>.
-      </p>
+      <button className='stylesbuttongotologin' onClick={() => navigate('/login')}>
+          Go to Login
+        </button>
+    </div>
     </div>
   );
 };

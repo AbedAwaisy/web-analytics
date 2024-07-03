@@ -7,7 +7,7 @@ export const uploadFile = async (file, setError) => {
     console.log('File object:', file);
     console.log('FormData:', formData);
     
-    const response = await axios.post('http://localhost:3001/upload', formData);
+    const response = await axios.post('http://localhost:3001/upload', formData, { withCredentials: true });
     console.log('File uploaded successfully');
     setError('File uploaded successfully');
     return response.data; // Return the response data
@@ -18,33 +18,29 @@ export const uploadFile = async (file, setError) => {
   }
 };
 
-
 export const fetchDataFromDB = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/data');
-        return response.data;
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  try {
+    const response = await axios.get('http://localhost:3001/data', { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 
-
-    
 export const insertUserToDB = async (userData, setError) => {
   try {
-     const response = await axios.post('http://localhost:3001/register', userData);
-    // Check if the user was inserted successfully
+    const response = await axios.post('http://localhost:3001/register', userData, { withCredentials: true });
     if (response) {
       console.log('User inserted successfully:', response.data);
-      setError('User iserted successfully');
-      return response.data; // Return the inserted user data
+      setError('User inserted successfully');
+      return response.data;
     } else {
-      console.error('Eerror inserting user:', response.data.error);
+      console.error('Error inserting user:', response.data.error);
       setError('Error inserting user. Please try again.');
       return null;
     }
   } catch (error) {
-    console.error('Eerror inserting user:', error);
+    console.error('Error inserting user:', error);
     setError('Error inserting user. Please try again.');
     return null;
   }
@@ -52,21 +48,86 @@ export const insertUserToDB = async (userData, setError) => {
 
 export const loginUser = async (loginData, setError) => {
   try {
-    const response = await axios.post('http://localhost:3001/login', loginData);
+    const response = await axios.post('http://localhost:3001/login', loginData, { withCredentials: true });
 
-    if (response ) {
+    if (response.data === "Success") {
       console.log('Login successful:', response.data);
-      localStorage.setItem('token', response.data.token); // Store the token in local storage
       setError('Login successful');
-      return response.data; // Return the login data
+      return response.data;
     } else {
-      console.error('Login failed:', response.data.message);
+      console.error('Login failed:', response.data);
       setError('Login failed. Please check your credentials.');
       return null;
     }
   } catch (error) {
     console.error('Error logging in:', error);
     setError('Error logging in. Please try again.');
+    return null;
+  }
+};
+
+export const fetchNotes = async (setError) => {
+  try {
+    const response = await axios.get('http://localhost:3001/notes', { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching notes:', error);
+    setError('Error fetching notes. Please try again.');
+    return null;
+  }
+};
+
+export const saveNote = async (note, setError) => {
+  try {
+    const response = await axios.post('http://localhost:3001/save-note', { note }, { withCredentials: true });
+    if (response.status === 200) {
+      setError('Note saved successfully');
+    }
+    return response.data;
+  } catch (error) {
+    console.error('Error saving note:', error);
+    setError('Error saving note. Please try again.');
+    return null;
+  }
+};
+
+export const updateNote = async (id, note, setError) => {
+  try {
+    const response = await axios.put('http://localhost:3001/update-note', { id, note }, { withCredentials: true });
+    if (response.status === 200) {
+      setError('Note updated successfully');
+    }
+    return response.data;
+  } catch (error) {
+    console.error('Error updating note:', error);
+    setError('Error updating note. Please try again.');
+    return null;
+  }
+};
+export const deleteNote = async (id, setError) => {
+  try {
+    const response = await axios.delete('http://localhost:3001/delete-note', { data: { id }, withCredentials: true });
+    if (response.status === 200) {
+      setError('Note deleted successfully');
+    }
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting note:', error);
+    setError('Error deleting note. Please try again.');
+    return null;
+  }
+};
+
+export const logoutUser = async (setError) => {
+  try {
+    const response = await axios.post('http://localhost:3001/logout');
+    if (response.status === 200) {
+      setError('Logged out successfully');
+    }
+    return response.data;
+  } catch (error) {
+    console.error('Error logging out:', error);
+    setError('Error logging out. Please try again.');
     return null;
   }
 };

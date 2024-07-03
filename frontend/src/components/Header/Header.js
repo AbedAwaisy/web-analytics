@@ -1,13 +1,29 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { logoutUser } from '../../api/api'; // Adjust the path as needed
 import './Header.css';
 
 const Header = () => {
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const response = await logoutUser(setError);
+    if (response) {
+      navigate('/login');
+    }
+  };
+
+  const handleSelectChange = (event) => {
+    if (event.target.value === 'logout') {
+      handleLogout();
+    }
+  };
   return (
     <header className="header">
       <div className="brand">
-        <img src="/images/tomato.png" alt="Tomato" className="tomato-image" />
-        Tomato Data
+        <img src="/images/logo.png" alt="Tomato" className="logo-image" />
+        Tomato Data Project
       </div>
       <nav>
         <ul>
@@ -15,13 +31,25 @@ const Header = () => {
             <Link to="/home">Home</Link>
           </li>
           <li>
-            <Link to="/exportdata">ExportData</Link>
+            <Link to="/exportdata">Graphs</Link>
           </li>
           <li>
             <Link to="/integration">Integration</Link>
           </li>
+          <li>
+            <Link to="/mynotes">Notes</Link>
+          </li>
+          <li>
+          </li>
         </ul>
       </nav>
+      <div className="logout-select">
+        <select onChange={handleSelectChange} defaultValue="">
+          <option value="" disabled>LogOut</option>
+          <option value="logout">Logout</option>
+        </select>
+      </div>
+      {error && <p className="error">{error}</p>}
     </header>
   );
 };
