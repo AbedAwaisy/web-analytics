@@ -7,9 +7,7 @@ const secretKey = 'mySecretKeyForJWTs_$2a$12$P5kgkrCnW2zX02dBy6r1Gu';
 
 const dataController = {
   getData: async (req, res) => {
-    // Replace with your actual query
     const sqlQuery = 'SELECT * FROM Person';
-
     pool.query(sqlQuery, (err, results) => {
       if (err) {
         console.error('Error fetching data:', err);
@@ -23,21 +21,11 @@ const dataController = {
   insertUser: async (req, res) => {
     try {
       const { name, email, password, mop } = req.body;
-      // Basic validation
-     /* let user_details = {
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        mop: req.body.mop,
-
-      }*/
-      // Replace the following code with your actual database insertion logic
       const sqlQuery = 'INSERT INTO users (name, email, password, mop) VALUES (?, ?, ?, ?)';
-      //const hashedPassword = await bcrypt.hash(password, saltRounds);
       pool.query(sqlQuery, [name, email, password, mop], (err, result) => {
         if (err) {
           console.error('Error inserting user:', err);
-          res.status(500).json({ message: 'Error inserting user', error: err }); // Provide detailed error message
+          res.status(500).json({ message: 'Error inserting user', error: err });
         } else {
           console.log('User inserted successfully');
           res.status(200).json({ message: 'User inserted successfully' });
@@ -45,23 +33,21 @@ const dataController = {
       });
     } catch (error) {
       console.error('Error inserting user:', error);
-      res.status(500).json({ message: 'Error inserting user', error: error}); // Provide detailed error message
+      res.status(500).json({ message: 'Error inserting user', error: error });
     }
-
   },
-
-
-
 
   loginUser: async (req, res) => {
     try {
+      const { email, password } = req.body;
       const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
-      pool.query(sql, [req.body.email, req.body.password], (err, data) => {
+      pool.query(sql, [email, password], (err, data) => {
         if (err) {
           console.error('Error querying database:', err);
           return res.json("Error");
         }
         if (data.length > 0) {
+          req.session.user = email;
           return res.json("Success");
         } else {
           return res.json("Fail");
@@ -72,73 +58,139 @@ const dataController = {
       res.status(500).json({ message: 'Error logging in. Please try again.' });
     }
   },
- /*   try {
-      const { email, password } = req.body;
-      const selectQuery = 'SELECT * FROM users WHERE email = ?';
-      const user = await pool.query(selectQuery, [email]);
-
-      if (!user) {
-          throw { status: 401, message: "Username or Password incorrect" };
-      }
-
-      // Ensure user.password exists before comparing
-      if (!user.password) {
-          throw { status: 500, message: "User password is missing or invalid" };
-      }
-
-      const passwordMatch = await bcrypt.compare(password, user.password);
-
-      if (passwordMatch) {
-          const token = jwt.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
-          res.status(200).json({ message: 'Login successful', token });
-      } else {
-          throw { status: 401, message: "Username or Password incorrect" };
-      }
-  } catch (error) {
-      console.error('Error logging in:', error);
-      res.status(error.status || 500).json({ message: error.message || 'Error logging in. Please try again.' });
-  }
-}, */
-
 
   uploadData: async (req, res) => {
     try {
-        // Read uploaded file from request body
-        const file = req.file.buffer;
-        //res.status(200).json({ message: 'File uploaded successfully' });
-        // Parse Excel file data
-        const workbook = XLSX.read(file, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0]; // Assuming there's only one sheet
-        const worksheet = workbook.Sheets[sheetName];
-        const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-        // Prepare data for database insertion
-        const values = data.slice(1); // Skip header row
-        const sqlQuery = 'INSERT INTO Persons (PersonID, LastName, FirstName, Address, City) VALUES ?';
-        console.log('Data to be uploaded:', values);
-        // Insert data into the database
-        pool.query(sqlQuery, [values], (err, result) => {
-            if (err) {
-                console.error('Error uploading data:', err);
-                res.status(500).json({ message: 'Error uploading data', error: err });
-            } else {
-                console.log('Data uploaded successfully');
-                res.status(200).json({ message: 'Data uploaded successfully' });
-            }
-        });
+      const file = req.file.buffer;
+      const workbook = XLSX.read(file, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      const values = data.slice(1);
+      const sqlQuery = 'INSERT INTO Persons (PersonID, LastName, FirstName, Address, City) VALUES ?';
+      pool.query(sqlQuery, [values], (err, result) => {
+        if (err) {
+          console.error('Error uploading data:', err);
+          res.status(500).json({ message: 'Error uploading data', error: err });
+        } else {
+          console.log('Data uploaded successfully');
+          res.status(200).json({ message: 'Data uploaded successfully' });
+        }
+      });
     } catch (error) {
-        console.error('Error parsing file:', error);
-        res.status(400).json({ message: 'Error parsing file', error: error });
+      console.error('Error parsing file:', error);
+      res.status(400).json({ message: 'Error parsing file', error: error });
     }
-}
+  },
 
+  saveNote: async (req, res) => {
+    try {
+      const user = req.session.user;
+      if (!user) {
+        console.error('Unauthorized access - No session user');
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      const { note } = req.body;
+      const insertQuery = 'INSERT INTO notes (user, note) VALUES (?, ?)';
+      pool.query(insertQuery, [user, note], (insertErr, insertResult) => {
+        if (insertErr) {
+          console.error('Error saving note:', insertErr);
+          return res.status(500).json({ message: 'Error saving note', error: insertErr });
+        } else {
+          return res.status(200).json({ message: 'Note saved successfully', id: insertResult.insertId });
+        }
+      });
+    } catch (error) {
+      console.error('Error saving note:', error);
+      return res.status(500).json({ message: 'Error saving note', error: error });
+    }
+  },
 
+  getNotes: async (req, res) => {
+    try {
+      const user = req.session.user;
+      if (!user) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      const sqlQuery = 'SELECT id, note FROM notes WHERE user = ?';
+      pool.query(sqlQuery, [user], (err, results) => {
+        if (err) {
+          console.error('Error fetching notes:', err);
+          res.status(500).json({ message: 'Error fetching notes', error: err });
+        } else {
+          res.json(results);
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+      res.status(500).json({ message: 'Error fetching notes', error: error });
+    }
+  },
 
+  updateNote: async (req, res) => {
+    try {
+      const user = req.session.user;
+      console.log('Session set:', req.session);
+      if (!user) {
+        console.error('Unauthorized access - No session user');
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      const { id, note } = req.body;
+      const updateQuery = 'UPDATE notes SET note = ? WHERE id = ? AND user = ?';
+      pool.query(updateQuery, [note, id, user], (updateErr, updateResult) => {
+        if (updateErr) {
+          console.error('Error updating note:', updateErr);
+          return res.status(500).json({ message: 'Error updating note', error: updateErr });
+        } else {
+          return res.status(200).json({ message: 'Note updated successfully' });
+        }
+      });
+    } catch (error) {
+      console.error('Error updating note:', error);
+      return res.status(500).json({ message: 'Error updating note', error: error });
+    }
+  },
 
+  deleteNote: async (req, res) => {
+    try {
+      const user = req.session.user;
+      if (!user) {
+        console.error('Unauthorized access - No session user');
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      const { id } = req.body;
+      const deleteQuery = 'DELETE FROM notes WHERE id = ? AND user = ?';
+      pool.query(deleteQuery, [id, user], (deleteErr, deleteResult) => {
+        if (deleteErr) {
+          console.error('Error deleting note:', deleteErr);
+          return res.status(500).json({ message: 'Error deleting note', error: deleteErr });
+        } else {
+          return res.status(200).json({ message: 'Note deleted successfully' });
+        }
+      });
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      return res.status(500).json({ message: 'Error deleting note', error: error });
+    }
+  },
 
+  protectedResource: (req, res) => {
+    if (req.session && req.session.user) {
+      res.status(200).json({ message: 'Access granted' });
+    } else {
+      res.status(401).json({ message: 'Unauthorized' });
+    }
+  },
 
-
-
-}
+  logoutUser: async (req, res) => {
+    try {
+      req.session.reset(); 
+      res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+      console.error('Error logging out:', error);
+      res.status(500).json({ message: 'Error logging out', error: error });
+    }
+  }
+};
 
 module.exports = dataController;
