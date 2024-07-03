@@ -30,18 +30,13 @@ export const fetchDataFromDB = async () => {
 export const insertUserToDB = async (userData, setError) => {
   try {
     const response = await axios.post('http://localhost:3001/register', userData, { withCredentials: true });
-    if (response) {
-      console.log('User inserted successfully:', response.data);
-      setError('User inserted successfully');
-      return response.data;
-    } else {
-      console.error('Error inserting user:', response.data.error);
-      setError('Error inserting user. Please try again.');
-      return null;
-    }
+    return response.data;
   } catch (error) {
     console.error('Error inserting user:', error);
     setError('Error inserting user. Please try again.');
+    if (error.response && error.response.data) {
+      return error.response.data;
+    }
     return null;
   }
 };
@@ -54,7 +49,8 @@ export const loginUser = async (loginData, setError) => {
       console.log('Login successful:', response.data);
       setError('Login successful');
       return response.data;
-    } else {
+    } 
+    else {
       console.error('Login failed:', response.data);
       setError('Login failed. Please check your credentials.');
       return null;

@@ -68,15 +68,16 @@ const Register = () => {
     const result = await insertUserToDB(userData, setErrors);
     console.log(result)
 
-
-    if (result) {
-        console.log('Registration successful:', result);
-        alert("Register Success");
-      } else {
-        console.error('Registration failed. Check the console for details.');
-        alert(" Register faild");
-      }
-
+    if (result && result.message === 'User inserted successfully') {
+      console.log('Registration successful:', result);
+      alert("Register Success");
+      navigate('/login');
+    } else if (result && result.message === 'User already exists') {
+      alert("User already exists");
+    } else {
+      console.error('Registration failed. Check the console for details.');
+      alert("Register failed");
+    }
   };
 
   return (
