@@ -1,0 +1,85 @@
+.notes-container {
+  max-width: 2600px;
+  margin-left: 20px;
+  padding: 40px;
+}
+
+.note-input {
+  width: 100%;
+  height: 400px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.save-note-button {
+  padding: 10px 20px;
+  background-color: #508550;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.save-note-button:hover {
+  background-color: #45a049;
+}
+
+.my_notes {
+  margin-top: 50px;
+}
+
+.saved-notes {
+  margin-top: 20px;
+}
+
+.note {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+}
+
+.note-content {
+  flex-grow: 1; 
+}
+
+.note-buttons {
+  display: flex;
+  gap: 10px; 
+}
+
+.edit-note-button, .delete-note-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.edit-note-button {
+  background-color: #012a38;
+  color: white;
+  padding: px 15px;
+}
+
+.edit-note-button:hover {
+  background-color: #024a6b;
+}
+
+.delete-note-button {
+  background-color: #012a38;
+  color: white;
+}
+
+.delete-note-button:hover {
+  background-color: #024a6b;
+}
+
+.error {
+  color: rgb(4, 0, 0);
+}

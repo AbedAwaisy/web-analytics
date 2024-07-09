@@ -7,6 +7,7 @@ import ExportData from './pages/ExportData';
 import Integration from './pages/Integration';
 import Register from './components/Register/Register';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword';
+import MyNotes from './pages/MyNotes/MyNotes';
 
 const MainPage = () => {
   const [ setIsLoggedIn] = useState(false);
@@ -24,6 +25,7 @@ const MainPage = () => {
         <Route path="/exportdata" element={<><Header /><ExportData /></>}/>
         <Route path="/integration" element={<><Header /><Integration /></>}/>
         <Route path="/register" element={<Register />} />
+        <Route path="/mynotes" element={<><Header /><MyNotes /></>} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/" element={<Navigate to="/login" />} />
       </Routes>

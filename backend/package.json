@@ -17,6 +17,7 @@
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "mysql2": "^3.9.2",
+    "nodemailer": "^6.9.14",
     "process-nextick-args": "^2.0.1",
     "react-scripts": "^5.0.1",
     "readable-stream": "^2.3.7",
