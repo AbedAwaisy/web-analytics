@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import {uploadFile} from '../api/api.js';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Integration = () => {
@@ -7,7 +6,7 @@ const Integration = () => {
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
   const [serverResponse, setServerResponse] = useState('');
-
+  const [ws, setWs] = useState(null);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -47,34 +46,47 @@ const Integration = () => {
   };
 
   const initiateWebSocketConnection = (file_name) => {
-    const ws = new WebSocket("ws://localhost:8000/ws");
-    ws.onopen = () => {
-      ws.send(file_name);
+    const wsInstance = new WebSocket("ws://localhost:8000/ws");
+    setWs(wsInstance);
+
+    wsInstance.onopen = () => {
+      wsInstance.send(file_name);
     };
-    ws.onmessage = (event) => {
+
+    wsInstance.onmessage = async (event) => {
       console.log(event.data);
-      if (event.data.includes("Does this file have an Experiment column?")) {
-          const hasExperiment = window.confirm(event.data) ? "Yes" : "No";
-          ws.send(hasExperiment);
-      } else if (event.data.includes("Please enter the Experiment column name:")) {
-          const experimentColumnName = prompt(event.data);
-          ws.send(experimentColumnName);
-      } else if (event.data.includes("Proceed with integration?")) {
-          const proceed = window.confirm(event.data) ? "Yes" : "No";
-          ws.send(proceed);
-      } else {
-          alert(event.data); // Show other messages as alerts
-      }
-  };
+      handleWebSocketMessage(event.data, wsInstance);
+    };
 
-  ws.onclose = () => {
+    wsInstance.onclose = () => {
       console.log("WebSocket connection closed.");
+    };
+
+    wsInstance.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
   };
 
-  ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
+  const handleWebSocketMessage = async (message, wsInstance) => {
+    if (message.toLowerCase().includes("yes/no")) {
+      const response = window.confirm(message) ? "Yes" : "No";
+      wsInstance.send(response);
+    } else if (message.toLowerCase().includes("please enter")) {
+      const response = prompt(message);
+      wsInstance.send(response);
+    } else {
+      alert(message);
+    }
   };
-};
+
+  useEffect(() => {
+    // Cleanup WebSocket on component unmount
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, [ws]);
 
   return (
     <div>
