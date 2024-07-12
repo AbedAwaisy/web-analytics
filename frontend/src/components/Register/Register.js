@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link,useNavigate} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import './Register.css';
 import { insertUserToDB } from '../../api/api'; // Adjust the path based on the actual location of api.js
 

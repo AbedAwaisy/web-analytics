@@ -21,6 +21,7 @@ const ExportData = () => {
             console.error('Error fetching data:', error);
         }
     };
+
     const fetchSortOptions = async () => {
         try {
             const fetchedSortOptions = await fetchSortOptionsFromDB(); // Fetch sorting options from the API
@@ -30,6 +31,7 @@ const ExportData = () => {
             console.error('Error fetching sorting options:', error);
         }
     };
+
     const fetchExperimentOptions = async (sortType) => {
         if (sortType !== '') { 
             try {
@@ -37,17 +39,19 @@ const ExportData = () => {
                 setExperimentOptions(fetchedExperimentOptions);
                 setExperimentType(fetchedExperimentOptions[0].ExperimentType); // Set the default experiment type
             } catch (error) {
-                console.error('Error fetching sorting options:', error);
+                console.error('Error fetching experiment options:', error);
             }
         }
     };
+
     useEffect(() => {
         fetchSortOptions(); // Fetch sorting options when component mounts
     }, []);
+
     useEffect(() => {
         fetchExperimentOptions(sortType); // Fetch experiment options when sortType changes
     }, [sortType]);
-    
+
     useEffect(() => {
         if (data.length > 0) {
             // Dynamically extract keys from the first item to use as headers
@@ -57,7 +61,7 @@ const ExportData = () => {
             // Add the headers row at the beginning
             googleData.unshift(headers);
             setGoogleChartData(googleData);
-    
+
             // Define filter controls based on the headers
             const controlArray = headers.map((header, index) => ({
                 controlType: 'StringFilter',
@@ -82,24 +86,22 @@ const ExportData = () => {
     };
 
     return (
-        console.log('rendred:'),
         <div className="container">
             <div className="dropdown">
-            <label>Sorting Type:</label>
-            <select onChange={(e) => setSortType(e.target.value)} value={sortType} className="select">
-                {sortOptions.map((option, index) => (
-                    <option key={index} value={option.SortingType}> {/* Accessing SortingType key */}
-                        {option.SortingType} {/* Display SortingType value */}
-                    </option>
+                <label>Sorting Type:</label>
+                <select onChange={(e) => setSortType(e.target.value)} value={sortType} className="select">
+                    {sortOptions.map((option, index) => (
+                        <option key={index} value={option.SortingType}>
+                            {option.SortingType}
+                        </option>
                     ))}
                 </select>
             </div>
 
-
             <div className="dropdown">
                 <label>Experiment Type:</label>
                 <select onChange={(e) => setExperimentType(e.target.value)} value={experimentType} className="select">
-                    {experimentOptions && experimentOptions.map((option, index) => (
+                    {experimentOptions.map((option, index) => (
                         <option key={index} value={option.ExperimentType}>
                             {option.ExperimentType}
                         </option>
@@ -107,51 +109,50 @@ const ExportData = () => {
                 </select>
             </div>
 
-                <button className="submit-btn" onClick={handleFetchData}>Submit</button>
+            <button className="submit-btn" onClick={handleFetchData}>Submit</button>
 
-                <button className="toggle-view-btn" onClick={handleViewModeToggle}>
-                    {viewMode === 'table' ? 'View Graph' : 'View Table'}
-                </button>
+            <button className="toggle-view-btn" onClick={handleViewModeToggle}>
+                {viewMode === 'table' ? 'View Graph' : 'View Table'}
+            </button>
 
-                {viewMode === 'table' && googleChartData.length > 1 ? (
-                    <div className="google-chart">
-                        <Chart
-                            chartType="Table"
-                            data={googleChartData}
-                            width="100%"
-                            height="400px"
-                            chartPackages={['controls']}
-                            controls={controls}
-                        />
-                    </div>
-                ) : (viewMode === 'table' &&
-                    <div className="no-data-placeholder">
-                        No data available to display.
-                    </div>
-                )}
+            {viewMode === 'table' && googleChartData.length > 1 ? (
+                <div className="google-chart">
+                    <Chart
+                        chartType="Table"
+                        data={googleChartData}
+                        width="100%"
+                        height="400px"
+                        chartPackages={['controls']}
+                        controls={controls}
+                    />
+                </div>
+            ) : (viewMode === 'table' &&
+                <div className="no-data-placeholder">
+                    No data available to display.
+                </div>
+            )}
 
-                {viewMode === 'graph' && googleChartData.length > 1 ? (
-                    <div className="google-chart">
-                        <Chart
-                            chartType="Bar"
-                            loader={<div>Loading Chart</div>}
-                            data={googleChartData}
-                            width="100%"
-                            height="400px"
-                            options={{
-                                chart: {
-                                    title: 'Person Data',
-                                },
-                            }}
-                        />
-                    </div>
-                ) : (viewMode === 'graph' &&
-                    <div className="no-data-placeholder">
-                        No data available to display.
-                    </div>
-                )}
-            </div>
-            
+            {viewMode === 'graph' && googleChartData.length > 1 ? (
+                <div className="google-chart">
+                    <Chart
+                        chartType="Bar"
+                        loader={<div>Loading Chart</div>}
+                        data={googleChartData}
+                        width="100%"
+                        height="400px"
+                        options={{
+                            chart: {
+                                title: 'Person Data',
+                            },
+                        }}
+                    />
+                </div>
+            ) : (viewMode === 'graph' &&
+                <div className="no-data-placeholder">
+                    No data available to display.
+                </div>
+            )}
+
             {/* Embed the Dash application directly under the box */}
             <div className="dashboard-container">
                 <iframe
@@ -160,7 +161,7 @@ const ExportData = () => {
                     title="Dash Application"
                 />
             </div>
-        </>
+        </div>
     );
 };
 
