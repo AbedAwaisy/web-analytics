@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "bignumber.js": "^9.0.0",
     "client-sessions": "^0.8.0",

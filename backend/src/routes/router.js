@@ -5,8 +5,10 @@ const router = express.Router();
 const dataController = require('../controllers/controller');
 
 // Define routes
-router.get('/data', dataController.getData);
-router.post('/upload', dataController.uploadData);
+router.get('/data/:sortType/:experimentType', dataController.getData);
+router.get('/sortOptions', dataController.sortOptions);
+router.get('/experimentOptions/:sortType', dataController.experimentOptions);
+//router.post('/upload', dataController.uploadData);
 router.post('/register', dataController.insertUser);
 router.post('/login', dataController.loginUser);
 router.post('/save-note', dataController.saveNote); 
