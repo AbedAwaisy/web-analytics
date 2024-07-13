@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { uploadFile } from '../api/api.js';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Integration.css'; // Import the CSS file
 
 const Integration = () => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
+  const [serverResponse, setServerResponse] = useState('');
+  const [ws, setWs] = useState(null);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -28,13 +30,64 @@ const Integration = () => {
       setError('Please select a file.');
       return;
     }
-    const fileExtension = file.name.split('.').pop().toLowerCase();
-    if (!(fileExtension === 'csv' || fileExtension === 'xlsx')) {
-      setError(`Unsupported file type: ${fileExtension ? `.${fileExtension}` : 'Unknown'}. Supported file types are .csv and .xlsx.`);
-      return;
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const response = await axios.post('http://localhost:8000/upload', formData);
+      if (response.data.status === "Columns check required") {
+        initiateWebSocketConnection(response.data.file_name);
+      } else {
+        setServerResponse(response.data.status);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setError('Error uploading file. Please try again.');
     }
-    uploadFile(file, setError);
   };
+
+  const initiateWebSocketConnection = (file_name) => {
+    const wsInstance = new WebSocket("ws://localhost:8000/ws");
+    setWs(wsInstance);
+
+    wsInstance.onopen = () => {
+      wsInstance.send(file_name);
+    };
+
+    wsInstance.onmessage = async (event) => {
+      console.log(event.data);
+      handleWebSocketMessage(event.data, wsInstance);
+    };
+
+    wsInstance.onclose = () => {
+      console.log("WebSocket connection closed.");
+    };
+
+    wsInstance.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+  };
+
+  const handleWebSocketMessage = async (message, wsInstance) => {
+    if (message.toLowerCase().includes("yes/no")) {
+      const response = window.confirm(message) ? "Yes" : "No";
+      wsInstance.send(response);
+    } else if (message.toLowerCase().includes("please enter")) {
+      const response = prompt(message);
+      wsInstance.send(response);
+    } else {
+      alert(message);
+    }
+  };
+
+  useEffect(() => {
+    // Cleanup WebSocket on component unmount
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, [ws]);
 
   return (
     <div>
@@ -57,6 +110,8 @@ const Integration = () => {
         {error && <p className="errorMessage">{error}</p>}
         <button type="submit" className="uploadButton">Upload</button>
       </form>
+      
+      {serverResponse && <p>{serverResponse}</p>}
     </div>
   );
 };

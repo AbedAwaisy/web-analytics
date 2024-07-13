@@ -7,9 +7,9 @@ const Home = () => {
   return ( 
     <>
       <div>
-        <a href="#about-us" className="scroll-about-us">About Project</a>
+        <a href="#about-us" className="scroll-about-us">About IntelliGrow</a>
       </div>
-      <h2 className='title'>Welcome to Tomato Data Project!</h2>
+      <h2 className='title_home'>Welcome to Tomato IntellGrow!</h2>
       <div className="home-container">
         <div className="mop-container">
           <h2 className="mop-title">Desert - Negev Ramat MOP</h2>
@@ -35,7 +35,7 @@ const Home = () => {
           <a href="http://agri.arava.co.il/research" target="_blank" rel="noopener noreferrer" className="learn-more-link">Learn more</a>
         </div>
       </div>
-      <h2 className='title'>About Project</h2>
+      <h2 className='title_home'>About IntelliGrow</h2>
       <div id="about-us" className="about-us-section">
         <p>
          there are three pages....

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { saveNote, fetchNotes, updateNote, deleteNote } from '../../api/api';
 import './MyNotes.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash, faEdit} from '@fortawesome/free-solid-svg-icons'
 
 const MyNotes = () => {
   const [notes, setNotes] = useState([]);
@@ -57,7 +59,7 @@ const MyNotes = () => {
 
   return (
     <div className="notes-container">
-      <h2> Write your Notes:</h2>
+      <h2 className="my_notes1"> Write your Notes:</h2>
       {error && <p className="error">{error}</p>}
       <textarea
         className="note-input"
@@ -74,8 +76,11 @@ const MyNotes = () => {
           <div key={note.id} className="note">
             <div className="note-content">{note.note}</div>
             <div className="note-buttons">
-              <button className="edit-note-button" onClick={() => handleEditNote(note.id, note.note)}>Edit</button>
-              <button className="delete-note-button" onClick={() => handleDeleteNote(note.id)}>Delete</button>
+            <button className="edit-note-button" onClick={() => handleEditNote(note.id, note.note)}>
+          <FontAwesomeIcon icon={faEdit} /></button>
+              <button className="delete-note-button" onClick={() => handleDeleteNote(note.id)}>
+                <FontAwesomeIcon icon={faTrash} /></button>
+              
             </div>
           </div>
         ))}

@@ -1,106 +1,110 @@
 /* Styles for the main container of the form */
 .integrationContainer {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  background-color: #fff; /* Add a background color for better contrast */
-  text-align: center; /* Center align the text */
-}
-
-/* Style adjustments for the file input area */
-.fileInput {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  border: 2px dashed #007BFF; /* Use a more vibrant border color */
-  border-radius: 5px;
-  margin-top: 20px;
-  transition: all 0.3s ease;
-  cursor: pointer; /* Make it clear it's clickable */
-}
-
-/* Styles when dragging a file over the input area */
-.fileInput.dragging {
-  border-color: #0056b3; /* Darker shade when active */
-  background-color: #e2f0ff; /* Lighter background to indicate active state */
-}
-
-/* Styles for displaying the selected or dragged file name */
-.fileName {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333; /* Darker font color for better readability */
-}
-
-/* Error message styles */
-.errorMessage {
-  color: red;
-  font-size: 16px; /* Slightly larger font size for clarity */
-  margin-top: 10px;
-}
-
-.uploadButton {
-  background-color: #28a745; /* A softer green */
-  color: white;
-  padding: 12px 24px; /* Larger padding for a better touch area */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-  font-size: 16px; /* Larger font size */
-  transition: background-color 0.3s ease;
-}
-
-.uploadButton:hover {
-  background-color: #218838; /* A slightly darker green on hover */
-}
-.title {
-    font-size: 60px; /* Set the font size */
-    color: #2c3e50; /* Dark shade of blue-gray for text color */
-    margin-bottom: 80px; /* Space below the title */
-    padding: 10px; /* Padding around the text */
-    text-align: center; /* Center the text */
-    border-bottom: 2px solid #2c3e50; /* A solid line under the text for emphasis */
-    width: 100%; /* Full width to align with the form */
-  }
-  .uploadForm {
-    width: 100%; /* Full width to fit its container */
-    max-width: 600px; /* Maximum width to maintain form readability */
-    background: #f8f9fa; /* Light grey background for slight contrast */
-    padding: 60px; /* Padding to give inner elements some room */
-    border-radius: 8px; /* Rounded corners for a softer look */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    margin: 20px auto; /* Center the form on the page vertically and horizontally */
-    display: flex; /* Use flexbox to organize children */
-    flex-direction: column; /* Stack children vertically */
-    align-items: center; /* Center-align the child elements horizontally */
-    justify-content: space-around; /* Distribute space evenly */
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: #fff; /* Add a background color for better contrast */
+    text-align: center; /* Center align the text */
   }
   
-  .uploadForm input[type="file"] {
-    border: 8px solid #dee2e6; /* Border to denote clickable area */
-    padding: 10px; /* Padding for visual space inside the input area */
-    margin-bottom: 15px; /* Space between file input and the next element */
-    width: 100%; /* Ensure the input takes the full width */
-    cursor: pointer; /* Indicate that the element is clickable */
+  /* Style adjustments for the file input area */
+  .fileInput {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    border: 2px dashed #007BFF; /* Use a more vibrant border color */
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer; /* Make it clear it's clickable */
   }
   
-  .uploadForm button {
-    padding: 10px 20px; /* Adequate padding for clickability */
-    background-color: #007bff; /* A bright blue that stands out */
-    color: white; /* White text for contrast */
-    border: none; /* No border for a modern look */
-    border-radius: 5px; /* Slightly rounded corners */
-    font-size: 16px; /* Readable text size */
-    cursor: pointer; /* Indicate clickability */
-    transition: background-color 0.2s; /* Smooth transition for hover effect */
+  /* Styles when dragging a file over the input area */
+  .fileInput.dragging {
+    border-color: #0056b3; /* Darker shade when active */
+    background-color: #e2f0ff; /* Lighter background to indicate active state */
   }
   
-  .uploadForm button:hover {
-    background-color: #0056b3; /* Darker blue on hover for feedback */
+  /* Styles for displaying the selected or dragged file name */
+  .fileName {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333; /* Darker font color for better readability */
   }
   
+  /* Error message styles */
+  .errorMessage {
+    color: red;
+    font-size: 16px; /* Slightly larger font size for clarity */
+    margin-top: 10px;
+  }
+  
+  .uploadButton {
+    background-color: #28a745; /* A softer green */
+    color: white;
+    padding: 12px 24px; /* Larger padding for a better touch area */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 16px; /* Larger font size */
+    transition: background-color 0.3s ease;
+  }
+  
+  .uploadButton:hover {
+    background-color: #218838; /* A slightly darker green on hover */
+  }
+  .title {
+      padding: 10px; /* Padding around the text */
+      text-align: center; /* Center the text */
+      border-bottom: 10px solid #b8d6af; /* A solid line under the text for emphasis */
+      width: 100%; /* Full width to align with the form */  
+      font-size: 2.5rem; /* #F5F5F5;Adjust size as needed */
+      color: #4CAF50; /* Green color */
+      text-align: center; /* Center align text */
+      margin-bottom: 80px; /* Add some spacing at the bottom */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Text shadow for depth */
+      font-size: 4rem;
+      margin-top: 90px ;
+    }
+    .uploadForm {
+      width: 100%; /* Full width to fit its container */
+      max-width: 700px; /* Maximum width to maintain form readability */
+      background: #f8f9fa; /* Light grey background for slight contrast */
+      padding: 80px; /* Padding to give inner elements some room */
+      border-radius: 8px; /* Rounded corners for a softer look */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      margin: 20px auto; /* Center the form on the page vertically and horizontally */
+      display: flex; /* Use flexbox to organize children */
+      flex-direction: column; /* Stack children vertically */
+      align-items: center; /* Center-align the child elements horizontally */
+      justify-content: space-around; /* Distribute space evenly */
+    }
+    
+    .uploadForm input[type="file"] {
+      border: 10px solid #dee2e6; /* Border to denote clickable area */
+      padding: 15px; /* Padding for visual space inside the input area */
+      margin-bottom: 20px; /* Space between file input and the next element */
+      width: 100%; /* Ensure the input takes the full width */
+      cursor: pointer; /* Indicate that the element is clickable */
+    }
+    
+    .uploadForm button {
+      padding: 10px 20px; /* Adequate padding for clickability */
+      background-color: #007bff; /* A bright blue that stands out */
+      color: white; /* White text for contrast */
+      border: none; /* No border for a modern look */
+      border-radius: 5px; /* Slightly rounded corners */
+      font-size: 16px; /* Readable text size */
+      cursor: pointer; /* Indicate clickability */
+      transition: background-color 0.2s; /* Smooth transition for hover effect */
+    }
+    
+    .uploadForm button:hover {
+      background-color: #0056b3; /* Darker blue on hover for feedback */
+    }
+    

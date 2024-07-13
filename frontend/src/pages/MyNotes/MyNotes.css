@@ -15,7 +15,7 @@
 
 .save-note-button {
   padding: 10px 20px;
-  background-color: #508550;
+  background-color: #45a049; 
   color: white;
   border: none;
   border-radius: 4px;
@@ -24,11 +24,27 @@
 }
 
 .save-note-button:hover {
-  background-color: #45a049;
+  background-color: rgb(103, 182, 103)
+}
+
+.my_notes1 {
+  font-size: 2.5rem; /* Adjust size as needed */
+  color: #4CAF50; ; /* Blue color */
+  margin-bottom: 45px; /* Add some spacing at the bottom */
+  letter-spacing: 2px; /* Add letter spacing for emphasis */
+  border-bottom: 10px solid #b8d6af;
+  width: 16%;
+  margin-top: 50px;
 }
 
 .my_notes {
-  margin-top: 50px;
+  font-size: 2.5rem; /* Adjust size as needed */
+  color: #4CAF50; ; /* Blue color */
+  margin-bottom: 45px; /* Add some spacing at the bottom */
+  letter-spacing: 2px; /* Add letter spacing for emphasis */
+  border-bottom: 10px solid #b8d6af;
+  width: 9%;
+  margin-top: 90px;
 }
 
 .saved-notes {
@@ -54,30 +70,46 @@
   gap: 10px; 
 }
 
-.edit-note-button, .delete-note-button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
 .edit-note-button {
-  background-color: #012a38;
+  background-color: #007bff; /* Blue color */
   color: white;
-  padding: px 15px;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .edit-note-button:hover {
-  background-color: #024a6b;
+  background-color: #0056b3; /* Darker shade of blue on hover */
+}
+
+.edit-note-button svg {
+  margin-right: 1px; /* Adds space between icon and text */
 }
 
 .delete-note-button {
-  background-color: #012a38;
+  background-color:  #e24252;
   color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .delete-note-button:hover {
-  background-color: #024a6b;
+  background-color: #c82333; 
+}
+
+.delete-note-button svg {
+  margin-right: 1px;
 }
 
 .error {

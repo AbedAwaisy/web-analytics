@@ -45,7 +45,8 @@
 }
 
 body {
-  background-color:#F5F5F5; /* Light blue background */
+  background-color:#ebfcec;
+
 }
 
 .scroll-about-us{
@@ -64,4 +65,14 @@ body {
   margin-top: 10px;
   color: black;
   height: 50vh;
+}
+.title_home {
+  font-size: 2.5rem; /* #F5F5F5;Adjust size as needed */
+  color: #4CAF50; /* Green color */
+  text-align: center; /* Center align text */
+  margin-bottom: 20px; /* Add some spacing at the bottom */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Text shadow for depth */
+  font-size: 4rem;
+  border-bottom: 10px solid #b8d6af; /* A solid line under the text for emphasis */
+  width: 100%; /* Full width to align with the form */  
 }
