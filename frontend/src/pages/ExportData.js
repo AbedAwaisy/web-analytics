@@ -71,7 +71,8 @@ const ExportData = () => {
     );
 
     return (
-        <div className="container">
+        <>
+        <div className="container_1">
             <button className="toggle-view-btn" onClick={handleViewModeToggle}>
                 {viewMode === 'table' ? 'View Graph' : 'View Table'}
             </button>
@@ -103,8 +104,14 @@ const ExportData = () => {
                     <button className="submit-btn" onClick={handleFetchData}>Submit</button>
                 </>
             )}
-
-            {viewMode === 'table' && filteredData.length > 0 ? (
+                  <div>
+        <a href="#Chatbot" className="scroll-about-us">Go to Chatbot</a>
+      </div>
+        </div>
+        
+        <h2 className='title_integration'>Data Table And Graphs</h2>
+        
+        {viewMode === 'table' && filteredData.length > 0 ? (
                 <div className="data-table">
                     <table>
                         <thead>
@@ -143,17 +150,22 @@ const ExportData = () => {
                     No data available to display.
                 </div>
             )}
-
-            {viewMode === 'graph' && (
-                <div className="dashboard-container">
-                    <iframe
-                        src="http://127.0.0.1:8050/"
-                        className="dashboard-iframe"
-                        title="Dash Application"
-                    />
-                </div>
-            )}
-        </div>
+                    {viewMode === 'graph' && (
+                        <div className="dashboard-container">
+                            <iframe
+                                src="http://127.0.0.1:8050/"
+                                className="dashboard-iframe"
+                                title="Dash Application"
+                            />
+                        </div>
+                    )}
+                  <h2 className='title_home'>About IntelliGrow</h2>
+      <div id="Chatbot" className="about-us-section">
+        <p>
+         there are three pages....
+        </p> 
+      </div>        
+                    </>
     );
 };
 

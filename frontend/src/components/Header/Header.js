@@ -23,7 +23,7 @@ const Header = () => {
     <header className="header">
       <div className="brand">
         <img src="/images/logo.png" alt="Tomato" className="logo-image" />
-        Tomato Data Project
+        Tomato IntelliGrow
       </div>
       <nav>
         <ul>
@@ -40,15 +40,16 @@ const Header = () => {
             <Link to="/mynotes">Notes</Link>
           </li>
           <li>
+          <div className="logout-select">
+          <select onChange={handleSelectChange} defaultValue="">
+          <option value="" disabled>LogOut</option>
+          <option value="logout">Logout</option>
+          </select>
+         </div>
           </li>
         </ul>
       </nav>
-      <div className="logout-select">
-        <select onChange={handleSelectChange} defaultValue="">
-          <option value="" disabled>LogOut</option>
-          <option value="logout">Logout</option>
-        </select>
-      </div>
+
       {error && <p className="error">{error}</p>}
     </header>
   );

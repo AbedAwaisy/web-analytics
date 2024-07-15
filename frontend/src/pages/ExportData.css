@@ -1,19 +1,22 @@
 /* Container styling */
-.container {
+.container_1 {
   width: 100%;
-  height: 100vh; /* Make the container fill the whole viewport height */
+  max-width: 600px;
+  margin: 0 auto;
   padding: 20px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 50px;
+  background-color: #eafde5; /* Add a background color for better contrast */
+  text-align: center; 
+  margin-top: 180px;
+
 }
 
 /* Dropdown styling */
 .dropdown {
-  margin: 10px 0;
-  display: flex;
-  align-items: center;
+  margin: 20px 0;
+  display: flex
+  
 }
 
 /* Select element styling */
@@ -138,4 +141,14 @@
     font-size: 0.8rem;
     padding: 8px;
   }
+}
+.title_integration{
+  font-size: 2.5rem; 
+  color: #4caf50; 
+  text-align: center; 
+  margin-bottom: 20px; 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Text shadow for depth */
+  border-bottom: 10px solid #b8d6af; 
+  width: 100%; 
+  margin-top: 120px;
 }
