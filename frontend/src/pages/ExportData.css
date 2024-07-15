@@ -1,12 +1,19 @@
 /* Container styling */
 .container {
   width: 100%;
+  height: 100vh; /* Make the container fill the whole viewport height */
   padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Dropdown styling */
 .dropdown {
   margin: 10px 0;
+  display: flex;
+  align-items: center;
 }
 
 /* Select element styling */
@@ -50,6 +57,10 @@
 /* Data table styling */
 .data-table {
   margin-top: 20px;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px); /* Adjust to fit within the viewport minus some space for other elements */
+  width: 100%;
 }
 
 .data-table table {
@@ -72,6 +83,8 @@
   padding-bottom: 12px;
   background-color: #4CAF50;
   color: white;
+  position: sticky;
+  top: 0;
 }
 
 /* No data placeholder */
@@ -81,17 +94,14 @@
   color: #888;
 }
 
-/* Google chart styling */
-.google-chart {
-  width: 100%;
-  margin-top: 20px;
-}
-
 /* Full width container for the dashboard */
 .dashboard-container {
   width: 100%;
   height: 80vh;  /* Take up 80% of the viewport height */
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Style the iframe to have full width and height */
@@ -99,4 +109,33 @@
   border: none;
   width: 100%;
   height: 100%;
+}
+
+/* Filter input styling */
+.filter-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dropdown, .submit-btn, .toggle-view-btn {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  nav {
+    display: none;
+  }
+
+  .brand-text {
+    font-size: 1.2rem;
+  }
+
+  .logout-select select {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
 }

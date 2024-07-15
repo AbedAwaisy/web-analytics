@@ -1,5 +1,5 @@
 .header {
-  background-color:rgb(50, 60, 50);
+  background-color: rgb(50, 60, 50);
   color: white;
   padding: 20px;
   display: flex;
@@ -12,25 +12,22 @@
   align-items: center;
   font-size: 2.5rem;
   font-weight: bold;
-  
 }
 
 .logo-image {
-  width: 90px; /* Increased the width for better visibility rgb(50, 60, 50);*/
+  width: 90px;
   margin-right: 10px;
-  border-radius: 50%; /* Rounded corners for a nicer look rgb(75, 128, 93);*/
+  border-radius: 50%;
 }
 
 .brand-text {
   font-size: 1.5rem;
   font-weight: bold;
   color: #ff6347;
-
 }
 
 nav {
   display: flex;
-  margin-right: -1700px;
 }
 
 ul {
@@ -50,14 +47,13 @@ a {
   color: white;
   font-weight: bold;
   font-size: 1.5rem;
-  text-decoration: underline;
 }
 
 a:hover {
   text-decoration: underline;
   color: rgba(226, 224, 224, 0.884);
-  
 }
+
 .logout-select {
   position: relative;
 }

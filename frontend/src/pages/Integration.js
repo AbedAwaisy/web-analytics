@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root'); // Ensure this is set for accessibility
 
 const Integration = () => {
   const [file, setFile] = useState(null);
@@ -7,6 +10,9 @@ const Integration = () => {
   const [dragging, setDragging] = useState(false);
   const [serverResponse, setServerResponse] = useState('');
   const [ws, setWs] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalType, setModalType] = useState(''); // 'confirm' or 'prompt'
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -69,14 +75,23 @@ const Integration = () => {
 
   const handleWebSocketMessage = async (message, wsInstance) => {
     if (message.toLowerCase().includes("yes/no")) {
-      const response = window.confirm(message) ? "Yes" : "No";
-      wsInstance.send(response);
+      setModalMessage(message);
+      setModalType('confirm');
+      setModalIsOpen(true);
     } else if (message.toLowerCase().includes("please enter")) {
-      const response = prompt(message);
-      wsInstance.send(response);
+      setModalMessage(message);
+      setModalType('prompt');
+      setModalIsOpen(true);
     } else {
       alert(message);
     }
+  };
+
+  const handleModalClose = (response) => {
+    if (ws) {
+      ws.send(response);
+    }
+    setModalIsOpen(false);
   };
 
   useEffect(() => {
@@ -110,9 +125,33 @@ const Integration = () => {
         <button type="submit" className="uploadButton">Upload</button>
       </form>
       {serverResponse && <p>{serverResponse}</p>}
+      
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => handleModalClose('')}
+        contentLabel="User Input Modal"
+      >
+        <h2>{modalMessage}</h2>
+        {modalType === 'confirm' && (
+          <div>
+            <button onClick={() => handleModalClose('Yes')}>Yes</button>
+            <button onClick={() => handleModalClose('No')}>No</button>
+          </div>
+        )}
+        {modalType === 'prompt' && (
+          <div>
+            <input
+              type="text"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') handleModalClose(e.target.value);
+              }}
+            />
+            <button onClick={() => handleModalClose('')}>Submit</button>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
 
 export default Integration;
-
