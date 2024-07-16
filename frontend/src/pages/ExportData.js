@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ExportData.css'; 
 import { fetchDataFromDB, fetchSortOptionsFromDB, fetchExperimentOptionsFromDB } from '../api/api';
+import Chatbot from '../components/ChatBot/Chatbot'; // Ensure this path is correct
 
 const ExportData = () => {
     const [data, setData] = useState([]);
@@ -159,13 +160,11 @@ const ExportData = () => {
                             />
                         </div>
                     )}
-                  <h2 className='title_home'>About IntelliGrow</h2>
-      <div id="Chatbot" className="about-us-section">
-        <p>
-         there are three pages....
-        </p> 
-      </div>        
-                    </>
+        <h2 className='title_home'>Data Assistant Chatbot</h2>
+        <div id="Chatbot" className="chatbot-section">
+            <Chatbot />
+        </div> 
+        </>
     );
 };
 

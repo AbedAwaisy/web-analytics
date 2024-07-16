@@ -9,14 +9,12 @@
   background-color: #eafde5; /* Add a background color for better contrast */
   text-align: center; 
   margin-top: 180px;
-
 }
 
 /* Dropdown styling */
 .dropdown {
   margin: 20px 0;
-  display: flex
-  
+  display: flex;
 }
 
 /* Select element styling */
@@ -122,6 +120,70 @@
   margin: 5px 0;
 }
 
+/* Chatbot styling */
+.chatbot-container {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  max-width: 800px; /* Set a max-width for the chatbot container */
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9; /* Background color for chatbot container */
+}
+
+.chatbot-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.chatbot-message {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  font-size: 1.1em; /* Increase the font size for messages */
+}
+
+.chatbot-message.user {
+  background-color: #007bff;
+  color: white;
+  text-align: right;
+}
+
+.chatbot-message.bot {
+  background-color: #28a745;
+  color: white;
+  text-align: left;
+}
+
+.chatbot-input {
+  display: flex;
+  align-items: center;
+}
+
+.chatbot-input input {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.chatbot-input button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.chatbot-input button:hover {
+  background-color: #0056b3;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .dropdown, .submit-btn, .toggle-view-btn {
@@ -129,20 +191,17 @@
     margin: 10px 0;
   }
 
-  nav {
-    display: none;
+  .container_1 {
+    width: 100%;
+    max-width: none;
   }
 
-  .brand-text {
-    font-size: 1.2rem;
-  }
-
-  .logout-select select {
-    font-size: 0.8rem;
-    padding: 8px;
+  .chatbot-container {
+    max-width: 100%;
   }
 }
-.title_integration{
+
+.title_integration {
   font-size: 2.5rem; 
   color: #4caf50; 
   text-align: center; 
@@ -151,4 +210,15 @@
   border-bottom: 10px solid #b8d6af; 
   width: 100%; 
   margin-top: 120px;
+}
+
+.title_home {
+  font-size: 2rem; 
+  color: #4caf50; 
+  text-align: center; 
+  margin-bottom: 20px; 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Text shadow for depth */
+  border-bottom: 10px solid #b8d6af; 
+  width: 100%; 
+  margin-top: 50px;
 }
