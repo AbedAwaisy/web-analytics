@@ -23,6 +23,8 @@ def connect():
     conn = mysql.connector.connect(user=user, password=password, host=host, database=database)
     return conn
 
+def update_fruit_number(df, col, col1, col2, col3, col4, col5, col6, col7, col8):
+    return df.apply(FruietNumber_Integrator, axis=1, col=col, col1=col1, col2=col2, col3=col3, col4=col4, col5=col5, col6=col6, col7=col7, col8=col8)
 
 def is_empty_dbs(table_name='ParcelMetaData'):
     connection = connect()

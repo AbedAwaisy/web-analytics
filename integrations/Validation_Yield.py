@@ -17,6 +17,42 @@ class Validation_Yield:
         self.id = self.columns['מזהה דגימה']
         self.biase = 1e-10
 
+    async def validate_black_number(self):
+        col = self.columns['שחור פיטם מספר']
+        data_filtered = self.df[self.df[col] != 0]
+        invalid_rows = data_filtered[data_filtered[col] == -1]
+        invalid_rows1 = data_filtered[~data_filtered[col].apply(is_integer_whole_number)]
+        data = data_filtered[data_filtered[col] != -1]
+        data1 = data[data[col].apply(is_integer_whole_number)]
+
+        if len(invalid_rows1) > 0:
+            indices = [i + 2 for i in list(invalid_rows1.index)]
+            await WebSocketHandler.send_message(
+                f"there is {len(invalid_rows1)} out of {self.n} Invalid values in the Black Pit Defect Number column ({col.strip()}) the value of Black Pit Defect Number column has to be a whole number. \nThe invalid samples indices are (the indices as they appear in the Excel file): \n{indices} \n check the values and fix them or give me authority to go forword and drop those rows: ")
+            authority = await WebSocketHandler.receive_message()
+
+            if authority.lower() == 'yes':
+                self.df = self.df[~self.df[self.id].isin(invalid_rows1[self.id])]
+                self.n = len(self.df)
+
+            else:
+                await WebSocketHandler.send_message(f"Invalid value(s) found in the column {col.strip()}.")
+                sys.exit(1)
+
+        if len(invalid_rows) > 0:
+            indices = [i + 2 for i in list(invalid_rows.index)]
+            await WebSocketHandler.send_message(
+                f"there is {len(invalid_rows)} out of {self.n} conflict values in the Black Pit Defect Number column ({col.strip()}) the value of Black Pit Defect column is not zero but Black Pit Defect number value is zero. \nThe invalid samples indices are (the indices as they appear in the Excel file): \n{indices} \n check the values and fix them or give me authority to go forword and drop those rows: ")
+            authority = await WebSocketHandler.receive_message()
+
+            if authority.lower() == 'yes':
+                self.df = self.df[~self.df[self.id].isin(invalid_rows[self.id])]
+                self.n = len(self.df)
+
+            else:
+                await WebSocketHandler.send_message(f"Invalid value(s) found in the column {col.strip()}.")
+                sys.exit(1)
+
     async def validate_cluster_harvest(self, scale_thresh=1.3, unique_lower_mean=0.86, unique_lower_std=0.11):
         col = self.columns['יצוא אשכולות']
 
@@ -40,7 +76,7 @@ class Validation_Yield:
         data = self.df[self.df[col] != 0]
         n = len(data)
         number_of_unique_values = data[col].nunique()
-        thresh = unique_lower_mean - unique_lower_std
+        thresh = unique_lower_mean - 2*unique_lower_std
         if n != 0:
             if number_of_unique_values / n < thresh:
                 await WebSocketHandler.send_message(
@@ -79,7 +115,7 @@ class Validation_Yield:
         data = self.df[self.df[col] != 0]
         n = len(data)
         number_of_unique_values = data[col].nunique()
-        thresh = unique_lower_mean - unique_lower_std
+        thresh = unique_lower_mean - 2*unique_lower_std
         if n > 0:
             if number_of_unique_values / n < thresh:
                 await WebSocketHandler.send_message(
@@ -139,7 +175,7 @@ class Validation_Yield:
                 await WebSocketHandler.send_message(f"Invalid value(s) found in the column {c.strip()}.")
                 sys.exit(1)
 
-    async def validate_single_harvest_number(self, thresh=0.4):
+    async def validate_single_harvest_number(self, thresh=0.25):
         col = self.columns['יצוא בודדים מספר']
         # self.df[col] = self.df[col].astype(float)
         data_filtered = self.df[self.df[col] != 0]

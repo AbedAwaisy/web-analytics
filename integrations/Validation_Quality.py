@@ -14,28 +14,29 @@ class Validation_Quality:
         self.biase = 1e-10
         self.id = self.columns['מזהה דגימה']
 
-    async def validate_weight(self, lower_thresh=0.1, upper_thresh=3.2):
-        col = self.columns['משקל weight']
-
-        # Check for values outside the specified range
-        invalid_lower_bound_df = self.df[self.df[col].apply(lambda x: math.log10(x + self.biase) < lower_thresh)]
-        invalid_upper_bound_df = self.df[self.df[col].apply(lambda x: math.log10(x + self.biase) > upper_thresh)]
-
-        invalid_rows_df = pd.concat([invalid_lower_bound_df, invalid_upper_bound_df]).drop_duplicates()
-
-        if not invalid_rows_df.empty:
-            indices = [i + 2 for i in list(invalid_rows_df.index)]
-            await WebSocketHandler.send_message(
-                f"{len(invalid_rows_df)} out of {self.n} invalid weight scale found in the weight column ({col.strip()}). The log10 of the weight value must be less than {upper_thresh} and greater than {lower_thresh}. \nThe invalid samples indices are (the indices as they appear in the Excel file): \n{indices} \n give me authority to drop those rows or fix the file and try again (Yes/No): ")
-            authority = await WebSocketHandler.receive_message()
-
-            if authority.lower() == 'yes':
-                self.df = self.df[~self.df[self.id].isin(invalid_rows_df[self.id])]
-                self.n = len(self.df)
-            else:
+    async def validate_fruit_numbers_cols(self):
+        cols = [self.columns['מספר פרות'], self.columns['נפליםfallen'], self.columns['מפוצציםcracked'],
+                self.columns['מוצקיםfirm'], self.columns['גמישיםflexible'], self.columns['רכיםsoft'],
+                self.columns['רקוביםrotten'], self.columns['חריגי צבעcolor defect'], self.columns['חסריםmissing']]
+        for col in cols:
+            invalid_rows_df = self.df[~self.df[col].apply(is_integer_whole_number)]
+            if not invalid_rows_df.empty:
+                indices = [i + 2 for i in list(invalid_rows_df.index)]
                 await WebSocketHandler.send_message(
-                    f"\n Invalid weight scale found in the weight column ({col.strip()})")
-                sys.exit(1)
+                    f"{len(invalid_rows_df)} out of {self.n} invalid fruiet number found in the column ({col.strip()}). the value of fruiet number column has to be a whole number. \nThe invalid samples indices are (the indices as they appear in the Excel file): \n{indices} \n check the values and fix them or give me authority to go forword and drop those rows: ")
+                authority = await WebSocketHandler.receive_message()
+                if authority.lower() == 'yes':
+                    self.df = self.df[~self.df[self.id].isin(invalid_rows_df[self.id])]
+                    self.n = len(self.df)
+                else:
+                    await WebSocketHandler.send_message(
+                        f"Invalid fruiet number value(s) found in column ({col.strip()}).")
+                    sys.exit(1)
+
+        self.df = update_fruit_number(
+            self.df, self.columns['מספר פרות'], self.columns['נפליםfallen'], self.columns['מפוצציםcracked'],
+            self.columns['מוצקיםfirm'], self.columns['גמישיםflexible'], self.columns['רכיםsoft'],
+            self.columns['רקוביםrotten'], self.columns['חריגי צבעcolor defect'], self.columns['חסריםmissing'])
 
     async def validate_fruiet_number(self):
         col = self.columns['מספר פרות']
