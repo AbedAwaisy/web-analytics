@@ -105,7 +105,7 @@ const ExportData = () => {
                 </>
             )}
                   <div>
-        <a href="#Chatbot" className="scroll-about-us">Go to Chatbot</a>
+        <a href="#Chatbot" className="chatbot">Go to Chatbot</a>
       </div>
         </div>
         
@@ -159,12 +159,8 @@ const ExportData = () => {
                             />
                         </div>
                     )}
-                  <h2 className='title_home'>About IntelliGrow</h2>
-      <div id="Chatbot" className="about-us-section">
-        <p>
-         there are three pages....
-        </p> 
-      </div>        
+                  <h2 id="Chatbot" className='title_chatbot'>Chatbot</h2>
+      
                     </>
     );
 };

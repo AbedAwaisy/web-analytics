@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-
+import './Integration.css'; // Import the CSS file
+import './Modal.css'; // Import the Modal CSS file
 Modal.setAppElement('#root'); // Ensure this is set for accessibility
 
 const Integration = () => {
@@ -12,7 +13,7 @@ const Integration = () => {
   const [ws, setWs] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const [modalType, setModalType] = useState(''); // 'confirm' or 'prompt'
+  const [modalType, setModalType] = useState(''); // 'confirm', 'prompt', or 'alert'
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -83,7 +84,9 @@ const Integration = () => {
       setModalType('prompt');
       setModalIsOpen(true);
     } else {
-      alert(message);
+      setModalMessage(message);
+      setModalType('alert');
+      setModalIsOpen(true);
     }
   };
 
@@ -105,10 +108,10 @@ const Integration = () => {
 
   return (
     <div>
-      <h2 className='title'>Choose Tomato Data File</h2>
-      <form onSubmit={handleFormSubmit}className="uploadForm">
+      <h2 className='title_integration'>Choose Tomato Data File</h2>
+      <form onSubmit={handleFormSubmit} className="uploadForm">
         <input type="file" onChange={handleFileChange} className="fileInputControl" />
-        <div
+        <div 
           onDrop={handleDrop}
           onDragOver={(event) => {
             event.preventDefault();
@@ -125,30 +128,37 @@ const Integration = () => {
         <button type="submit" className="uploadButton">Upload</button>
       </form>
       {serverResponse && <p>{serverResponse}</p>}
-      
-      <Modal
+     
+      <Modal className='ReactModal__Overlay'
         isOpen={modalIsOpen}
         onRequestClose={() => handleModalClose('')}
         contentLabel="User Input Modal"
       >
-        <h2>{modalMessage}</h2>
-        {modalType === 'confirm' && (
-          <div>
-            <button onClick={() => handleModalClose('Yes')}>Yes</button>
-            <button onClick={() => handleModalClose('No')}>No</button>
-          </div>
-        )}
-        {modalType === 'prompt' && (
-          <div>
-            <input
-              type="text"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') handleModalClose(e.target.value);
-              }}
-            />
-            <button onClick={() => handleModalClose('')}>Submit</button>
-          </div>
-        )}
+        <div className="modal-content">
+          <h2>{modalMessage}</h2>
+          {modalType === 'confirm' && (
+            <div className="modal-buttons">
+              <button onClick={() => handleModalClose('Yes')}>Yes</button>
+              <button onClick={() => handleModalClose('No')}>No</button>
+            </div>
+          )}
+          {modalType === 'prompt' && (
+            <div>
+              <input
+                type="text"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') handleModalClose(e.target.value);
+                }}
+              />
+              <button className='SubmitButton'onClick={() => handleModalClose('')}>Submit</button>
+            </div>
+          )}
+          {modalType === 'alert' && (
+            <div className="modal-buttons">
+              <button onClick={() => handleModalClose('Ok')}>Ok</button>
+            </div>
+          )}
+        </div>
       </Modal>
     </div>
   );

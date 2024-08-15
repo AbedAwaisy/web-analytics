@@ -3,11 +3,12 @@
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 200px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  background-color: #fff; /* Add a background color for better contrast */
+  background-color: white; /* Add a background color for better contrast */
   text-align: center; /* Center align the text */
+
 }
 
 /* Style adjustments for the file input area */
@@ -58,14 +59,17 @@
 .uploadButton:hover {
   background-color: #218838; /* A slightly darker green on hover */
 }
-.title {
-    font-size: 60px; /* Set the font size */
-    color: #2c3e50; /* Dark shade of blue-gray for text color */
-    margin-bottom: 80px; /* Space below the title */
-    padding: 10px; /* Padding around the text */
-    text-align: center; /* Center the text */
-    border-bottom: 2px solid #2c3e50; /* A solid line under the text for emphasis */
-    width: 100%; /* Full width to align with the form */
+
+  .title_integration{
+  font-size: 2.5rem; /* Adjust size as needed */
+  color: #4caf50; /* Green color */
+  text-align: center; /* Center align text */
+  margin-bottom: 20px; /* Add spacing at the bottom */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Text shadow for depth */
+  border-bottom: 10px solid #b8d6af; /* A solid line under the text for emphasis */
+  width: 100%; /* Full width to align with the form */  
+  margin-top: 100px ;
+  margin-bottom: 80px;
   }
   .uploadForm {
     width: 100%; /* Full width to fit its container */
@@ -79,6 +83,9 @@
     flex-direction: column; /* Stack children vertically */
     align-items: center; /* Center-align the child elements horizontally */
     justify-content: space-around; /* Distribute space evenly */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 50px;
+    background-color: #eafde5; 
   }
   
   .uploadForm input[type="file"] {
